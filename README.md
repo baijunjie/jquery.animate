@@ -139,11 +139,11 @@ console.log($("div").css("x"));  //=> 200px
 Note that because of <b>CSS3 Transition</b> animation support only three times bezier curve, so some slow moving in [jQuery.easing] cannot support, such as: Bounce.<br>
 If use it does not support <b>easing</b>, We will use the original <b>jQuery.animate</b> methods to achieve this animation.<br>
 
-同时，所有的 Transform 属性不能分别设置 Easing，因为他们的 transition 都是通过 transform 属性来设置的。<br>
-因此，如果发生这种情况，程序会将第一个找到的 Easing 作为整个 transform 属性的 Easing。<br>
+同时，所有的 Transform 属性不能分别设置 Easing，因为他们的 Transition 都是通过 Transform 属性来设置的。<br>
+因此，如果发生这种情况，程序会将找到的第一个 Easing 作为 Transform 属性的 Easing。<br>
 
-Meanwhile, all the <b>Transform</b> property can not be separately set <b>Easing</b>, because their <b>transition</b> through <b>transform</b> property to set the.<br>
-So, if this happens, Easing program will first find the property as a whole transform Easing.<br>
+Meanwhile, all the <b>Transform</b> property can not be separately set <b>Easing</b>, because their <b>Transition</b> through <b>Transform</b> property to set the.<br>
+So, if this happens, Easing program will find the first as the <b>Transform</b> property <b>Easing</b>.<br>
 
 ```js
 $("div").animate({
@@ -205,8 +205,8 @@ $.cssEase = {
 这个插件是参考以下插件编写的，感谢作者！<br> 
 This plug-in is written in reference to the following plug-ins, thanks to the author!<br>
 
-__【[jquery.transit](https://github.com/rstacruz/jquery.transit)】__<br>
-__【[jQuery 2D transformations](https://github.com/heygrady/transform/)】__<br>
+[<b>[jquery.transit]</b>](https://github.com/rstacruz/jquery.transit)<br>
+[[jQuery 2D transformations]](https://github.com/heygrady/transform/)<br>
 
 
 
