@@ -1,13 +1,12 @@
 ﻿# jquery.animate
 
-#### 重写了 jQuery.animate 的默认行为，使其优先使用 CSS3 Transition。<br>
-
-#### Rewrite the <b>jQuery.animate</b>"s default behavior, make it priority use of <b>CSS3 Transition</b>.<br>
+重写了 jQuery.animate 的默认行为，使其优先使用 CSS3 Transition。<br>
+Rewrite the <b>jQuery.animate</b>"s default behavior, make it priority use of <b>CSS3 Transition</b>.<br>
 
 
 ## 为什么使用？ / Why use?
 
-这个插件是对 jQuery.animate 方法的改写,您不需要考虑修改您的代码，您只需要导入插件，就可以让你所有的 jQuery 动画转化为 CSS3 Transition。<br>
+这个插件是对 jQuery.animate 方法的改写，您不需要考虑修改您的代码，您只需要导入插件，就可以让你所有的 jQuery 动画转化为 CSS3 Transition。<br>
 
 This plugin is the rewriting of <b>jQuery.animate</b> method, you do not need to consider modifying your code, you just need to include plug-in, can let all of your jQuery animation into <b>CSS3 Transition</b>.<br>
 
@@ -15,8 +14,6 @@ This plugin is the rewriting of <b>jQuery.animate</b> method, you do not need to
 ## Usage
 
 将 [jquery.animate.js] 引在 jQuery 之后。<br>
-
-
 Just include [jquery.animate.js] after jQuery.<br>
 
 
@@ -66,7 +63,7 @@ $("div").css({ scaleX: 3 }).css("scale");                //=> ["3","1"]
 ```
 
 
-支持删除属性<br>
+支持删除属性。<br>
 Support delete attributes.<br>
 ```js
 .css({ translate: "2, 5" });       //=> "translate(2px, 5px)"
@@ -86,16 +83,19 @@ $("div").hide().fadeIn(2000, function() { ... });
 
 $("div").animate({left: 100});
 $("div").animate({x: 200}, 1000, "easeOutBack", function() { ... });
+
 $("div").animate({opacity: 0},{
 	queue: false,
 	duration: 2000,
 	easing: "linear"
 });
+
 $("div").animate({
 	left: [100, "linear"],
 	top: [200, "easeOutBack",
 	scale: [[2,3], "easeInBack"]
 });
+
 $("div").animate({
 	left: 100,
 	top: 200
@@ -123,13 +123,13 @@ Can perfect support <b>.stop()</b> and <b>.finish()</b> method.<br>
 $("div").animate({x: 200}, 2000, "linear");
 window.setTimeout(function() {
 	$("div").stop();
-	console.log($("div").css("x")); //=> 100px
+	console.log($("div").css("x"));  //=> 100px
 }, 1000);
 ```
 ```js
 $("div").animate({x: 200}, 2000, "linear");
 $("div").finish();
-console.log($("div").css("x"));         //=> 200px
+console.log($("div").css("x"));  //=> 200px
 ```
 
 
@@ -141,7 +141,7 @@ If use it does not support <b>easing</b>, We will use the original <b>jQuery.ani
 
 [jQuery.easing]: https://github.com/gdsmith/jquery.easing
 
-以下是本插件支持的缓动列表。<br>
+以下是插件支持的缓动列表。<br>
 The following is a list of transit support slow.<br>
 
 ```js
@@ -186,8 +186,8 @@ $.cssEase = {
 这个插件是参考以下插件编写的，感谢作者！<br> 
 This plug-in is written in reference to the following plug-ins, thanks to the author!<br>
 
-__[jquery.transit](https://github.com/rstacruz/jquery.transit)__
-__[jQuery 2D transformations](https://github.com/heygrady/transform/)__
+__【[jquery.transit](https://github.com/rstacruz/jquery.transit)】__<br>
+__【[jQuery 2D transformations](https://github.com/heygrady/transform/)】__<br>
 
 
 
