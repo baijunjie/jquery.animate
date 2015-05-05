@@ -133,6 +133,13 @@ $("div").finish();
 console.log($("div").css("x"));  //=> 200px
 ```
 
+现在可以支持颜色动画了，并且可以使用 .stop() 方法停止到某个颜色值。<br>
+Can support color animation now, and you can use the <b>.stop()</b> method to stop to a color value.<br>
+
+```js
+$("div").animate({ backgroundColor: "black" }, 5000);
+```
+
 
 注意，由于 CSS3 Transition 动画的只支持三次贝塞尔曲线，因此[jQuery.easing]中的某些缓动无法支持，比如：Bounce。<br>
 如果使用了它不支持的 easing，那么将会使用原来的 jQuery.animate 方法来实现该动画。<br>
@@ -203,6 +210,12 @@ $.cssEase = {
 };
 ```
 
+
+# Changelog
+## v1.2
+-添加了对颜色动画的支持
+
+
 ## Thanks
 
 这个插件是参考以下插件编写的，感谢作者！<br> 
@@ -212,14 +225,6 @@ __[jquery.transit](https://github.com/rstacruz/jquery.transit)__<br>
 __[jQuery 2D transformations](https://github.com/heygrady/transform/)__<br>
 
 
-## v1.2
-
-现在可以支持颜色动画了，并且可以使用 .stop() 方法停止到某个颜色值。<br>
-Can support color animation now, and you can use the <b>.stop()</b> method to stop to a color value.<br>
-
-```js
-$("div").animate({ backgroundColor: "black" }, 5000);
-```
 
 
 
