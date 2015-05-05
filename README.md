@@ -108,6 +108,7 @@ $("div").animate({
 	}
 });
 ```
+
 Transform 属性还支持特殊的写法。<br>
 <b>Transform</b> properties also supports special writing.<br>
 
@@ -209,6 +210,16 @@ This plug-in is written in reference to the following plug-ins, thanks to the au
 
 __[jquery.transit](https://github.com/rstacruz/jquery.transit)__<br>
 __[jQuery 2D transformations](https://github.com/heygrady/transform/)__<br>
+
+
+## v1.2
+
+现在可以支持颜色动画了，并且可以使用 .stop() 方法停止到某个颜色值。<br>
+Can support color animation now, and you can use the <b>.stop()</b> method to stop to a color value.<br>
+
+```js
+$("div").animate({ backgroundColor: "black" }, 5000);
+```
 
 
 

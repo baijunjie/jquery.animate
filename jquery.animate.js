@@ -1,5 +1,5 @@
 /*!
- * jQuery Animate v1.1 - By CSS3 transition
+ * jQuery Animate v1.2 - By CSS3 transition
  * @author baijunjie
  *
  * https://github.com/baijunjie/jquery.animate
@@ -19,9 +19,10 @@
 }(this, function($) {
 	"use strict";
 
+	var testElem = document.createElement("div"),
+		$testElem = $(testElem);
 	// 返回支持的属性名
 	function getSupportPropertyName(prop) {
-		var testElem = document.documentElement;
 		if (prop in testElem.style) return prop;
 
 		var testProp = prop.charAt(0).toUpperCase() + prop.substr(1),
@@ -37,7 +38,6 @@
 
 	// 检查是否支持3D
 	function checkTransform3dSupport() {
-		var testElem = document.createElement("div");
 		testElem.style[support.transform] = "";
 		testElem.style[support.transform] = "rotateY(90deg)";
 		return testElem.style[support.transform] !== "";
@@ -798,7 +798,7 @@
 			if (value === "show" || value === "toggle") {
 				if (hidden) {
 					show = true;
-					value = props[p] = curValue;
+					value = curValue;
 					curValue = 0;
 					endProps[p] = "";
 				} else {
@@ -807,21 +807,35 @@
 			} else if (value === "hide" || value === "toggle") {
 				if (!hidden) {
 					show = false;
-					value = props[p] = 0;
+					value = 0;
 					endProps[p] = "";
 				} else {
 					delete props[p];
 				}
 			}
 
-			curValue = isNaN(parseFloat(curValue)) ? 0 : curValue; // 主要针对定位属性，如：left默认为auto
+			// 处理颜色值
+			if (typeof value === "string" && isNaN(parseFloat(value))) {
+				var color = isColor(value);
+				value = color ? color : 0;
+			}
 
-			curValue = convertUnit($self, curValue, getUnit(value));
-			if (curValue == value) {
+			if (typeof curValue === "string" && isNaN(parseFloat(curValue))) {
+				var curColor = isColor(curValue);
+				curValue = curColor ? curColor : 0; // 主要针对定位属性，如：left默认为auto
+			}
+
+			if (!curColor) {
+				curValue = convertUnit($self, curValue, getUnit(value));
+			}
+
+			if ((curValue == value)
+			|| (!!color ^ !!curColor)) {
 				delete props[p];
 				continue;
 			}
 
+			props[p] = value;
 			startProps[p] = curValue;
 		}
 
@@ -919,13 +933,25 @@
 				} else {
 					var curProp = {};
 					for (var p in properties) {
-						var startValue = parseFloat(startProps[p]),
+						var startValue = startProps[p],
 							endValue = properties[p],
-							u = getUnit(endValue);
+							dv;
 
 						setCubicBezier(specialEasing[p]);
 						var bezierY = cubicBezier.getY(($.now() - startTime) / duration);
-						curProp[p] = (parseFloat(endValue) - startValue) * bezierY + startValue + u;
+
+						if (!endValue.indexOf("rgb")) {
+							startValue = parseColor(startValue);
+							endValue = parseColor(endValue);
+							dv = calculateColor(startValue, endValue, bezierY);
+						} else {
+							var u = getUnit(endValue);
+							startValue = parseFloat(startValue);
+							endValue = parseFloat(endValue);
+							dv = (parseFloat(endValue) - startValue) * bezierY + startValue + u;
+						}
+
+						curProp[p] = dv;
 					}
 					$self.css(curProp);
 				}
@@ -1258,6 +1284,71 @@
 		}
 
 		return unit(i, "ms");
+	}
+
+	// ### isColor(value)
+	// 判断一个值是否为颜色，如果是颜色则返回该颜色的 rgb 形式
+	//
+	//    isColor(white);  =>  "rgb(255,255,255)"
+	//    isColor(abcd);   =>  false
+	//
+	function isColor(value) {
+		testElem.style.color = "";
+		testElem.style.color = value;
+		$testElem.appendTo('body');
+		var color = testElem.style.color !== "" && $testElem.css("color");
+		$testElem.detach();
+		return color;
+	}
+
+	// ### calculateColor(begin, end, pos)
+	// 根据 0-1 之间的位置比，计算两个颜色在该位置上的过渡色
+	//
+	//    calculateColor([255,255,255,1], [0,0,0,1], .5);  =>  "rgba(127,127,127,1)"
+	//    calculateColor([255,255,255],   [0,0,0],   .5);  =>  "rgb(127,127,127)"
+	//
+	function calculateColor(begin, end, pos) {
+		var len = Math.min(begin.length, end.length);
+		var color = 'rgb' + (len > 3 ? 'a' : '') + '('
+				+ parseInt((begin[0] + pos * (end[0] - begin[0])), 10) + ','
+				+ parseInt((begin[1] + pos * (end[1] - begin[1])), 10) + ','
+				+ parseInt((begin[2] + pos * (end[2] - begin[2])), 10);
+		if (len > 3) {
+			color += ',' + (begin && end ? parseFloat(begin[3] + pos * (end[3] - begin[3])) : 1);
+		}
+		color += ')';
+		return color;
+	}
+
+	// ### parseColor(color)
+	// 将一个颜色值转化为数组形式
+	//
+	//    "rgba(127,127,127,1)"  =>  [127, 127, 127, 1]
+	//    "rgb(127,127,127)"     =>  [127, 127, 127, 1]
+	//    "#000000"              =>  [  0,   0,   0, 1]
+	//    "#fff"                 =>  [255, 255, 255, 1]
+	//
+	function parseColor(color) {
+		var match, triplet;
+
+		// Match #aabbcc
+		if (match = /#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})/.exec(color)) {
+			triplet = [parseInt(match[1], 16), parseInt(match[2], 16), parseInt(match[3], 16), 1];
+
+			// Match #abc
+		} else if (match = /#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])/.exec(color)) {
+			triplet = [parseInt(match[1], 16) * 17, parseInt(match[2], 16) * 17, parseInt(match[3], 16) * 17, 1];
+
+			// Match rgb(n, n, n)
+		} else if (match = /rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/.exec(color)) {
+			triplet = [parseInt(match[1]), parseInt(match[2]), parseInt(match[3]), 1];
+
+		} else if (match = /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9\.]*)\s*\)/.exec(color)) {
+			triplet = [parseInt(match[1], 10), parseInt(match[2], 10), parseInt(match[3], 10),parseFloat(match[4])];
+
+			// No browser returns rgb(n%, n%, n%), so little reason to support this format.
+		}
+		return triplet;
 	}
 
 	// ### getArg(str)
