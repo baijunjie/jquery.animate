@@ -216,7 +216,7 @@ $.cssEase = {
 -添加了对颜色动画的支持
 
 
-## Thanks
+# Thanks
 
 这个插件是参考以下插件编写的，感谢作者！<br> 
 This plug-in is written in reference to the following plug-ins, thanks to the author!<br>
