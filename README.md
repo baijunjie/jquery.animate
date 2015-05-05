@@ -205,8 +205,8 @@ $.cssEase = {
 这个插件是参考以下插件编写的，感谢作者！<br> 
 This plug-in is written in reference to the following plug-ins, thanks to the author!<br>
 
-[<b>[jquery.transit]</b>](https://github.com/rstacruz/jquery.transit)<br>
-[[jQuery 2D transformations]](https://github.com/heygrady/transform/)<br>
+__[jquery.transit](https://github.com/rstacruz/jquery.transit)__<br>
+__[jQuery 2D transformations](https://github.com/heygrady/transform/)__<br>
 
 
 
