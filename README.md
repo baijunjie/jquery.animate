@@ -1,7 +1,7 @@
 ﻿# jquery.animate
 
-重写了 jQuery.animate 的默认行为，使其优先使用 CSS3 Transition。<br>
-Rewrite the <b>jQuery.animate</b>"s default behavior, make it priority use of <b>CSS3 Transition</b>.<br>
+重写了 jQuery.animate 的默认行为，使它优先使用 CSS3 Transition 来实现动画。<br>
+Rewrite the <b>jQuery.animate</b>"s default behavior, The priority use <b>CSS3 Transition</b> to achieve animation.<br>
 
 
 ## 为什么使用？ / Why use?
@@ -20,7 +20,6 @@ Just include [jquery.animate.js] after jQuery.<br>
 ``` html
 
 <script src="jquery.js"></script>
-
 <script src="jquery.animate.js"></script>
 
 ```
@@ -66,8 +65,9 @@ $("div").css({ scaleX: 3 }).css("scale");                //=> ["3","1"]
 支持删除属性。<br>
 Support delete attributes.<br>
 ```js
-.css({ translate: "2, 5" });       //=> "translate(2px, 5px)"
-.css({ translate: "" });           //=> remove "translate(2px, 5px)"
+.css({ translate: "2, 5" });                 //=> "translate(2px, 5px)"
+.css({ translate: "" });                     //=> remove "translate(2px, 5px)"
+.css({ scale: "2,3" }).css({ scaleX: "" });  //=> "scale(1, 3)"
 ```
 
 
@@ -92,7 +92,7 @@ $("div").animate({opacity: 0},{
 
 $("div").animate({
 	left: [100, "linear"],
-	top: [200, "easeOutBack",
+	top: [200, "easeOutBack"],
 	scale: [[2,3], "easeInBack"]
 });
 
@@ -133,11 +133,30 @@ console.log($("div").css("x"));  //=> 200px
 ```
 
 
-注意，由于 CSS3 Transition 动画的只支持三次贝塞尔曲线，因此[jQuery.easing]中的某些缓动无法支持，比如：Bounce<br>
+注意，由于 CSS3 Transition 动画的只支持三次贝塞尔曲线，因此[jQuery.easing]中的某些缓动无法支持，比如：Bounce。<br>
 如果使用了它不支持的 easing，那么将会使用原来的 jQuery.animate 方法来实现该动画。<br>
 
-Note that because of <b>CSS3 Transition</b> animation support only three times bezier curve, so some slow moving in [jQuery.easing] cannot support, such as: Bounce<br>
+Note that because of <b>CSS3 Transition</b> animation support only three times bezier curve, so some slow moving in [jQuery.easing] cannot support, such as: Bounce.<br>
 If use it does not support <b>easing</b>, We will use the original <b>jQuery.animate</b> methods to achieve this animation.<br>
+
+同时，所有的 Transform 属性不能分别设置 Easing，因为他们的 transition 都是通过 transform 属性来设置的。<br>
+因此，如果发生这种情况，程序会将第一个找到的 Easing 作为整个 transform 属性的 Easing。<br>
+
+Meanwhile, all the <b>Transform</b> property can not be separately set <b>Easing</b>, because their <b>transition</b> through <b>transform</b> property to set the.<br>
+So, if this happens, Easing program will first find the property as a whole transform Easing.<br>
+
+```js
+$("div").animate({
+	x: [300, "easeOutBack"],
+	y: [200, "linear"]
+});
+
+// CSS will be like this
+div {
+	transition: transform 2000ms easeOutBack;
+}
+
+```
 
 [jQuery.easing]: https://github.com/gdsmith/jquery.easing
 
