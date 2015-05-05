@@ -1295,7 +1295,7 @@
 	function isColor(value) {
 		testElem.style.color = "";
 		testElem.style.color = value;
-		$testElem.appendTo('body');
+		$testElem.appendTo("body");
 		var color = testElem.style.color !== "" && $testElem.css("color");
 		$testElem.detach();
 		return color;
@@ -1308,15 +1308,24 @@
 	//    calculateColor([255,255,255],   [0,0,0],   .5);  =>  "rgb(127,127,127)"
 	//
 	function calculateColor(begin, end, pos) {
-		var len = Math.min(begin.length, end.length);
-		var color = 'rgb' + (len > 3 ? 'a' : '') + '('
-				+ parseInt((begin[0] + pos * (end[0] - begin[0])), 10) + ','
-				+ parseInt((begin[1] + pos * (end[1] - begin[1])), 10) + ','
-				+ parseInt((begin[2] + pos * (end[2] - begin[2])), 10);
+		var len = Math.min(begin.length, end.length),
+			r = begin[0] + pos * (end[0] - begin[0]),
+			g = begin[1] + pos * (end[1] - begin[1]),
+			b = begin[2] + pos * (end[2] - begin[2]),
+			color = "rgb";
 		if (len > 3) {
-			color += ',' + (begin && end ? parseFloat(begin[3] + pos * (end[3] - begin[3])) : 1);
+			color += "a";
+			var a = parseFloat(begin[3] + pos * (end[3] - begin[3]), 10);
+			r /= a;
+			g /= a;
+			b /= a;
 		}
-		color += ')';
+		r = parseInt(r, 10);
+		g = parseInt(g, 10);
+		b = parseInt(b, 10);
+		color += "(" + r + "," + g + "," + b ;
+		if (len > 3) { color += "," + a; }
+		color += ")";
 		return color;
 	}
 
