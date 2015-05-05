@@ -1,14 +1,15 @@
 ﻿# jquery.animate
 
-重写了 jQuery.animate 的默认行为，使它优先使用 CSS3 Transition 来实现动画。<br>
-Rewrite the <b>jQuery.animate</b>"s default behavior, The priority use <b>CSS3 Transition</b> to achieve animation.<br>
+重写了 <b>jQuery.animate</b> 的默认行为，使它优先使用 <b>CSS3 Transition</b> 来实现动画。<br>
+
+Rewrite the <b>jQuery.animate</b>'s default behavior, The priority use <b>CSS3 Transition</b> to achieve animation.<br>
 
 
 ## 为什么使用？ / Why use?
 
-这个插件是对 jQuery.animate 方法的改写，您不需要考虑修改您的代码，您只需要导入插件，就可以让你所有的 jQuery 动画转化为 CSS3 Transition。<br>
+这个插件是对 <b>jQuery.animate</b> 方法的改写，您不需要考虑修改您的代码，您只需要导入插件，就可以让你所有的 <b>jQuery</b> 动画转化为 <b>CSS3 Transition</b>。<br>
 
-This plugin is the rewriting of <b>jQuery.animate</b> method, you do not need to consider modifying your code, you just need to include plug-in, can let all of your jQuery animation into <b>CSS3 Transition</b>.<br>
+This plugin is the rewriting of <b>jQuery.animate</b> method, you do not need to consider modifying your code, you just need to include plug-in, can let all of your <b>jQuery</b> animation into <b>CSS3 Transition</b>.<br>
 
 
 ## Usage
@@ -28,7 +29,7 @@ Just include [jquery.animate.js] after jQuery.<br>
 
 ## cssHook
 
-可以直接通过 .css() 方法来设置 Transform 属性。<br>
+可以直接通过 <b>.css()</b> 方法来设置 <b>Transform</b> 属性。<br>
 Can be directly through the <b>.css()</b> method to set the <b>Transform</b> properties.<br>
 
 ``` js
@@ -73,7 +74,7 @@ Support delete attributes.<br>
 
 ## animate
 
-支持 jQuery.animate 原生的所有写法。<br>
+支持 <b>jQuery.animate</b> 原生的所有写法。<br>
 Support all <b>jQuery.animate</b> native writing.<br>
 
 ```js
@@ -109,7 +110,7 @@ $("div").animate({
 });
 ```
 
-Transform 属性还支持特殊的写法。<br>
+<b>Transform</b> 属性还支持特殊的写法。<br>
 <b>Transform</b> properties also supports special writing.<br>
 
 ```js
@@ -118,7 +119,7 @@ $("div").animate({"rotate3d": "30,20,90"});
 ```
 
 
-可以完美支持 .stop() 以及 .finish() 方法。<br>
+可以完美支持 <b>.stop()</b> 以及 <b>.finish()</b> 方法。<br>
 Can perfect support <b>.stop()</b> and <b>.finish()</b> method.<br>
 ```js
 $("div").animate({x: 200}, 2000, "linear");
@@ -133,7 +134,7 @@ $("div").finish();
 console.log($("div").css("x"));  //=> 200px
 ```
 
-现在可以支持颜色动画了，并且可以使用 .stop() 方法停止到某个颜色值。<br>
+现在可以支持颜色动画了，并且可以使用 <b>.stop()</b> 方法停止到某个颜色值。<br>
 Can support color animation now, and you can use the <b>.stop()</b> method to stop to a color value.<br>
 
 ```js
@@ -141,14 +142,14 @@ $("div").animate({ backgroundColor: "black" }, 5000);
 ```
 
 
-注意，由于 CSS3 Transition 动画的只支持三次贝塞尔曲线，因此[jQuery.easing]中的某些缓动无法支持，比如：Bounce。<br>
-如果使用了它不支持的 easing，那么将会使用原来的 jQuery.animate 方法来实现该动画。<br>
+注意，由于 <b>CSS3 Transition</b> 动画的只支持三次贝塞尔曲线，因此[jQuery.easing]中的某些缓动无法支持，比如：Bounce。<br>
+如果使用了它不支持的 <b>Easing</b>，那么将会使用原来的 <b>jQuery.animate</b> 方法来实现该动画。<br>
 
 Note that because of <b>CSS3 Transition</b> animation support only three times bezier curve, so some slow moving in [jQuery.easing] cannot support, such as: Bounce.<br>
-If use it does not support <b>easing</b>, We will use the original <b>jQuery.animate</b> methods to achieve this animation.<br>
+If use it does not support <b>Easing</b>, We will use the original <b>jQuery.animate</b> methods to achieve this animation.<br>
 
-同时，所有的 Transform 属性不能分别设置 Easing，因为他们的 Transition 都是通过 Transform 属性来设置的。<br>
-因此，如果发生这种情况，程序会将找到的第一个 Easing 作为 Transform 属性的 Easing。<br>
+同时，所有的 <b>Transform</b> 属性不能分别设置 <b>Easing</b>，因为他们的 <b>Transition</b> 都是通过 <b>Transform</b> 属性来设置的。<br>
+因此，如果发生这种情况，程序会将找到的第一个 <b>Easing</b> 作为 <b>Transform</b> 属性的 <b>Easing</b>。<br>
 
 Meanwhile, all the <b>Transform</b> property can not be separately set <b>Easing</b>, because their <b>Transition</b> through <b>Transform</b> property to set the.<br>
 So, if this happens, Easing program will find the first as the <b>Transform</b> property <b>Easing</b>.<br>
