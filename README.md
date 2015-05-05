@@ -149,10 +149,10 @@ Note that because of <b>CSS3 Transition</b> animation support only three times b
 If use it does not support <b>Easing</b>, We will use the original <b>jQuery.animate</b> methods to achieve this animation.<br>
 
 同时，所有的 <b>Transform</b> 属性不能分别设置 <b>Easing</b>，因为他们的 <b>Transition</b> 都是通过 <b>Transform</b> 属性来设置的。<br>
-因此，如果发生这种情况，程序会将找到的第一个 <b>Easing</b> 作为 <b>Transform</b> 属性的 <b>Easing</b>。<br>
+因此，如果发生这种情况，那么只有第一个 <b>Easing</b> 将作为 <b>transition-timing-function</b>。<br>
 
 Meanwhile, all the <b>Transform</b> property can not be separately set <b>Easing</b>, because their <b>Transition</b> through <b>Transform</b> property to set the.<br>
-So, if this happens, Easing program will find the first as the <b>Transform</b> property <b>Easing</b>.<br>
+So, if this happens, only the first <b>Easing</b> will serve as <b>transition-timing-function</b>.<br>
 
 ```js
 $("div").animate({
