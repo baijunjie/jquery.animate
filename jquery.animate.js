@@ -1,22 +1,23 @@
 /*!
- * jQuery Animate v1.0 - By CSS3 transition
+ * jQuery Animate v1.1 - By CSS3 transition
  * @author baijunjie
  *
  * https://github.com/baijunjie/jquery.animate
  */
 
-'use strict'
-;(function(root, factory) {
+(function(root, factory) {
+	"use strict";
 
-	if (typeof define === 'function' && define.amd) {
-		define(['jquery'], factory);
-	} else if (typeof exports === 'object') {
-		module.exports = factory(require('jquery'));
+	if (typeof define === "function" && define.amd) {
+		define(["jquery"], factory);
+	} else if (typeof exports === "object") {
+		module.exports = factory(require("jquery"));
 	} else {
 		factory(root.jQuery);
 	}
 
 }(this, function($) {
+	"use strict";
 
 	// 返回支持的属性名
 	function getSupportPropertyName(prop) {
@@ -24,7 +25,7 @@
 		if (prop in testElem.style) return prop;
 
 		var testProp = prop.charAt(0).toUpperCase() + prop.substr(1),
-			prefixs = [ 'Webkit', 'Moz', 'ms', 'O' ];
+			prefixs = [ "Webkit", "Moz", "ms", "O" ];
 
 		for (var i = 0, l = prefixs.length; i < l; i++) {
 			var prefixProp = prefixs[i] + testProp;
@@ -36,98 +37,98 @@
 
 	// 检查是否支持3D
 	function checkTransform3dSupport() {
-		var testElem = document.createElement('div');
-		testElem.style[support.transform] = '';
-		testElem.style[support.transform] = 'rotateY(90deg)';
-		return testElem.style[support.transform] !== '';
+		var testElem = document.createElement("div");
+		testElem.style[support.transform] = "";
+		testElem.style[support.transform] = "rotateY(90deg)";
+		return testElem.style[support.transform] !== "";
 	}
 
 	var eventNames = {
-		'transition'       : 'transitionend',
-		'MozTransition'    : 'transitionend',
-		'WebkitTransition' : 'webkitTransitionEnd',
-		'OTransition'      : 'oTransitionEnd',
-		'msTransition'     : 'MSTransitionEnd'
+		"transition"       : "transitionend",
+		"MozTransition"    : "transitionend",
+		"WebkitTransition" : "webkitTransitionEnd",
+		"OTransition"      : "oTransitionEnd",
+		"msTransition"     : "MSTransitionEnd"
 	};
 
 	// 检查浏览器的 transition 支持
 	var support = {};
-	support.transform          = getSupportPropertyName('transform');
+	support.transform          = getSupportPropertyName("transform");
 	if (!support.transform) return;
-	support.transformOrigin    = getSupportPropertyName('transformOrigin');
-	support.transformStyle     = getSupportPropertyName('transformStyle');
-	support.perspective        = getSupportPropertyName('perspective');
-	support.perspectiveOrigin  = getSupportPropertyName('perspectiveOrigin');
-	support.backfaceVisibility = getSupportPropertyName('backfaceVisibility');
-	support.filter             = getSupportPropertyName('filter');
-	support.transition         = getSupportPropertyName('transition');
+	support.transformOrigin    = getSupportPropertyName("transformOrigin");
+	support.transformStyle     = getSupportPropertyName("transformStyle");
+	support.perspective        = getSupportPropertyName("perspective");
+	support.perspectiveOrigin  = getSupportPropertyName("perspectiveOrigin");
+	support.backfaceVisibility = getSupportPropertyName("backfaceVisibility");
+	support.filter             = getSupportPropertyName("filter");
+	support.transition         = getSupportPropertyName("transition");
 	support.transform3d        = checkTransform3dSupport();
 	support.transitionEnd      = eventNames[support.transition];
 
 	// 将检测到的支持结果写入 $.support
 	for (var key in support) {
-		if (support.hasOwnProperty(key) && typeof $.support[key] === 'undefined') {
+		if (typeof $.support[key] === "undefined") {
 			$.support[key] = support[key];
 		}
 	}
 
 	// 缓动列表
 	$.cssEase = {
-		'_default'       : 'swing',
-		'swing'          : 'easeOutQuad', // 和 jQuery Easing 相同，查看详情https://github.com/gdsmith/jquery.easing
-		'linear'         : 'cubic-bezier(0,0,1,1)',
-		'ease'           : 'cubic-bezier(.25,.1,.25,1)',
-		'ease-in'        : 'cubic-bezier(.42,0,1,1)',
-		'ease-out'       : 'cubic-bezier(0,0,.58,1)',
-		'ease-in-out'    : 'cubic-bezier(.42,0,.58,1)',
+		"_default"       : "swing",
+		"swing"          : "easeOutQuad", // 和 jQuery Easing 相同，查看详情 https://github.com/gdsmith/jquery.easing
+		"linear"         : "cubic-bezier(0,0,1,1)",
+		"ease"           : "cubic-bezier(.25,.1,.25,1)",
+		"ease-in"        : "cubic-bezier(.42,0,1,1)",
+		"ease-out"       : "cubic-bezier(0,0,.58,1)",
+		"ease-in-out"    : "cubic-bezier(.42,0,.58,1)",
 
-		'easeInCubic'    : 'cubic-bezier(.550,.055,.675,.190)',
-		'easeOutCubic'   : 'cubic-bezier(.215,.61,.355,1)',
-		'easeInOutCubic' : 'cubic-bezier(.645,.045,.355,1)',
-		'easeInCirc'     : 'cubic-bezier(.6,.04,.98,.335)',
-		'easeOutCirc'    : 'cubic-bezier(.075,.82,.165,1)',
-		'easeInOutCirc'  : 'cubic-bezier(.785,.135,.15,.86)',
-		'easeInExpo'     : 'cubic-bezier(.95,.05,.795,.035)',
-		'easeOutExpo'    : 'cubic-bezier(.19,1,.22,1)',
-		'easeInOutExpo'  : 'cubic-bezier(1,0,0,1)',
-		'easeInQuad'     : 'cubic-bezier(.55,.085,.68,.53)',
-		'easeOutQuad'    : 'cubic-bezier(.25,.46,.45,.94)',
-		'easeInOutQuad'  : 'cubic-bezier(.455,.03,.515,.955)',
-		'easeInQuart'    : 'cubic-bezier(.895,.03,.685,.22)',
-		'easeOutQuart'   : 'cubic-bezier(.165,.84,.44,1)',
-		'easeInOutQuart' : 'cubic-bezier(.77,0,.175,1)',
-		'easeInQuint'    : 'cubic-bezier(.755,.05,.855,.06)',
-		'easeOutQuint'   : 'cubic-bezier(.23,1,.32,1)',
-		'easeInOutQuint' : 'cubic-bezier(.86,0,.07,1)',
-		'easeInSine'     : 'cubic-bezier(.47,0,.745,.715)',
-		'easeOutSine'    : 'cubic-bezier(.39,.575,.565,1)',
-		'easeInOutSine'  : 'cubic-bezier(.445,.05,.55,.95)',
-		'easeInBack'     : 'cubic-bezier(.6,-.28,.735,.045)',
-		'easeOutBack'    : 'cubic-bezier(.175, .885,.32,1.275)',
-		'easeInOutBack'  : 'cubic-bezier(.68,-.55,.265,1.55)'
+		"easeInCubic"    : "cubic-bezier(.550,.055,.675,.190)",
+		"easeOutCubic"   : "cubic-bezier(.215,.61,.355,1)",
+		"easeInOutCubic" : "cubic-bezier(.645,.045,.355,1)",
+		"easeInCirc"     : "cubic-bezier(.6,.04,.98,.335)",
+		"easeOutCirc"    : "cubic-bezier(.075,.82,.165,1)",
+		"easeInOutCirc"  : "cubic-bezier(.785,.135,.15,.86)",
+		"easeInExpo"     : "cubic-bezier(.95,.05,.795,.035)",
+		"easeOutExpo"    : "cubic-bezier(.19,1,.22,1)",
+		"easeInOutExpo"  : "cubic-bezier(1,0,0,1)",
+		"easeInQuad"     : "cubic-bezier(.55,.085,.68,.53)",
+		"easeOutQuad"    : "cubic-bezier(.25,.46,.45,.94)",
+		"easeInOutQuad"  : "cubic-bezier(.455,.03,.515,.955)",
+		"easeInQuart"    : "cubic-bezier(.895,.03,.685,.22)",
+		"easeOutQuart"   : "cubic-bezier(.165,.84,.44,1)",
+		"easeInOutQuart" : "cubic-bezier(.77,0,.175,1)",
+		"easeInQuint"    : "cubic-bezier(.755,.05,.855,.06)",
+		"easeOutQuint"   : "cubic-bezier(.23,1,.32,1)",
+		"easeInOutQuint" : "cubic-bezier(.86,0,.07,1)",
+		"easeInSine"     : "cubic-bezier(.47,0,.745,.715)",
+		"easeOutSine"    : "cubic-bezier(.39,.575,.565,1)",
+		"easeInOutSine"  : "cubic-bezier(.445,.05,.55,.95)",
+		"easeInBack"     : "cubic-bezier(.6,-.28,.735,.045)",
+		"easeOutBack"    : "cubic-bezier(.175, .885,.32,1.275)",
+		"easeInOutBack"  : "cubic-bezier(.68,-.55,.265,1.55)"
 	};
 
 	// 转换easing为贝塞尔函数
 	//
-	//    'swing' => 'cubic-bezier(.25,.46,.45,.94)'
+	//    "swing" => "cubic-bezier(.25,.46,.45,.94)"
 	//
 	function convertEase(easing) {
-		if (typeof easing !== 'string') return;
-		if (easing.indexOf('cubic-bezier') !== 0) {
+		if (typeof easing !== "string") return;
+		if (easing.indexOf("cubic-bezier") !== 0) {
 			easing = $.cssEase[easing];
 			return convertEase(easing);
 		}
 		return easing;
 	}
 
-	// ## 'transform' CSS hook
+	// ## "transform" CSS hook
 	//
-	//    $('div').css({ transform: 'rotate(90deg)' });
-	//    $('div').css('transform'); //=> { rotate: '90deg' }
+	//    $("div").css({ transform: "rotate(90deg)" });
+	//    $("div").css("transform"); => { rotate: "90deg" }
 	//
 	$.cssHooks.transform = {
 		get: function(elem) {
-			return $.data(elem, 'transform') || new Transform();
+			return $.data(elem, "transform") || new Transform();
 		},
 		set: function(elem, v) {
 			var value = v;
@@ -138,13 +139,13 @@
 
 			elem.style[support.transform] = value.toString();
 
-			$.data(elem, 'transform', value);
+			$.data(elem, "transform", value);
 		}
 	};
 
-	// ## 'filter' CSS hook
+	// ## "filter" CSS hook
 	//
-	//    $('div').css({ filter: 'blur(10px)' });
+	//    $("div").css({ filter: "blur(10px)" });
 	//
 	$.cssHooks.filter = {
 		get: function(elem) {
@@ -156,10 +157,10 @@
 	};
 
 	// jQuery 1.8- 不支持这些属性的前缀转换
-	if (compareVersion('1.8', $.fn.jquery) > 0) {
-		// ## 'transformOrigin' CSS hook
+	if (compareVersion("1.8", $.fn.jquery) > 0) {
+		// ## "transformOrigin" CSS hook
 		//
-		//    $('div').css({ transformOrigin: '0 0' });
+		//    $("div").css({ transformOrigin: "0 0" });
 		//
 		$.cssHooks.transformOrigin = {
 			get: function(elem) {
@@ -170,9 +171,9 @@
 			}
 		};
 
-		// ## 'transformStyle' CSS hook
+		// ## "transformStyle" CSS hook
 		//
-		//    $('div').css({ transformStyle: 'preserve-3d' });
+		//    $("div").css({ transformStyle: "preserve-3d" });
 		//
 		$.cssHooks.transformStyle = {
 			get: function(elem) {
@@ -183,9 +184,9 @@
 			}
 		};
 
-		// ## 'perspective' CSS hook
+		// ## "perspective" CSS hook
 		//
-		//    $('div').css({ perspective: '1000px' });
+		//    $("div").css({ perspective: "1000px" });
 		//
 		$.cssHooks.perspective = {
 			get: function(elem) {
@@ -196,9 +197,9 @@
 			}
 		};
 
-		// ## 'perspectiveOrigin' CSS hook
+		// ## "perspectiveOrigin" CSS hook
 		//
-		//    $('div').css({ perspectiveOrigin: '100px 100px' });
+		//    $("div").css({ perspectiveOrigin: "100px 100px" });
 		//
 		$.cssHooks.perspectiveOrigin = {
 			get: function(elem) {
@@ -209,9 +210,9 @@
 			}
 		};
 
-		// ## 'backfaceVisibility' CSS hook
+		// ## "backfaceVisibility" CSS hook
 		//
-		//    $('div').css({ backfaceVisibility: '100px 100px' });
+		//    $("div").css({ backfaceVisibility: "100px 100px" });
 		//
 		$.cssHooks.backfaceVisibility = {
 			get: function(elem) {
@@ -222,9 +223,9 @@
 			}
 		};
 
-		// ## 'transition' CSS hook
+		// ## "transition" CSS hook
 		//
-		//    $('div').css({ transition: 'all 0 ease 0' });
+		//    $("div").css({ transition: "all 0 ease 0" });
 		//
 		$.cssHooks.transition = {
 			get: function(elem) {
@@ -238,14 +239,14 @@
 
 	// ## compare version
 	//
-	//    a = '1.11.1',  b = '1.8.2'
+	//    a = "1.11.1",  b = "1.8.2"
 	//    a > b return 1
 	//    a < b return -1
 	//    a = b return 0
 	//
 	function compareVersion(a, b) {
-		var aa = a.split('.'),
-			bb = b.split('.'),
+		var aa = a.split("."),
+			bb = b.split("."),
 			al = aa.length,
 			bl = bb.length,
 			len = Math.max(al, bl),
@@ -263,27 +264,27 @@
 	var propertyMap = {};
 
 	// Register other CSS hooks
-	registerCssHook('x');
-	registerCssHook('y');
-	registerCssHook('z');
-	registerCssHook('translateX');
-	registerCssHook('translateY');
-	registerCssHook('translateZ');
-	registerCssHook('translate');
-	registerCssHook('translate3d');
-	registerCssHook('scale');
-	registerCssHook('scaleX');
-	registerCssHook('scaleY');
-	registerCssHook('scaleZ');
-	registerCssHook('scale3d');
-	registerCssHook('rotate');
-	registerCssHook('rotateX');
-	registerCssHook('rotateY');
-	registerCssHook('rotateZ');
-	registerCssHook('rotate3d');
-	registerCssHook('skew');
-	registerCssHook('skewX');
-	registerCssHook('skewY');
+	registerCssHook("x");
+	registerCssHook("y");
+	registerCssHook("z");
+	registerCssHook("translateX");
+	registerCssHook("translateY");
+	registerCssHook("translateZ");
+	registerCssHook("translate");
+	registerCssHook("translate3d");
+	registerCssHook("scale");
+	registerCssHook("scaleX");
+	registerCssHook("scaleY");
+	registerCssHook("scaleZ");
+	registerCssHook("scale3d");
+	registerCssHook("rotate");
+	registerCssHook("rotateX");
+	registerCssHook("rotateY");
+	registerCssHook("rotateZ");
+	registerCssHook("rotate3d");
+	registerCssHook("skew");
+	registerCssHook("skewX");
+	registerCssHook("skewY");
 
 	function registerCssHook(prop, isPixels) {
 		// 所有属性都不应该被强制添加px单位，即使是 translate，因为它也可能是百分比
@@ -295,37 +296,37 @@
 
 		$.cssHooks[prop] = {
 			get: function(elem) {
-				var t = $.css(elem, 'transform');
+				var t = $.css(elem, "transform");
 				return t.get(prop);
 			},
 
 			set: function(elem, value) {
-				var t = $.css(elem, 'transform');
+				var t = $.css(elem, "transform");
 				t.setFromString(prop, value);
-				$.style(elem, 'transform', t);
+				$.style(elem, "transform", t);
 			}
 		};
 	}
 
 	// ## Transform class
 	//
-	//    var t = new Transform('rotate(90) scale(4)');
+	//    var t = new Transform("rotate(90) scale(4)");
 	//
 	// Set properties
 	//
-	//    t.set('rotate', 40)
+	//    t.set("rotate", 40)
 	//
 	// Get properties
 	//
-	//    t.rotate             //=> '40deg'
-	//    t.scale              //=> '4'
+	//    t.rotate             => "40deg"
+	//    t.scale              => "4"
 	//
 	// The output string
 	//
-	//    t.toString()         //=> 'rotate(40deg) scale(4)'
+	//    t.toString()         => "rotate(40deg) scale(4)"
 	//
 	function Transform(str) {
-		if (typeof str === 'string') {
+		if (typeof str === "string") {
 			this.parse(str);
 		}
 	}
@@ -333,8 +334,8 @@
 	Transform.prototype = {
 		// ### setFromString()
 		//
-		//    t.setFromString('scale', '2,4');  //=> ['scale', '2', '4']
-		//    t.setFromString('scale', [,4]);   //=> ['scale', null, '4']
+		//    t.setFromString("scale", "2,4");  => ["scale", "2", "4"]
+		//    t.setFromString("scale", [,4]);   => ["scale", null, "4"]
 		//
 		setFromString: function(prop, val) {
 			var args;
@@ -345,7 +346,7 @@
 				}
 				args = val;
 			} else {
-				args = (typeof val === 'string') ? val.split(',') : [val];
+				args = (typeof val === "string") ? val.split(",") : [val];
 			}
 
 			args.unshift(prop);
@@ -354,17 +355,17 @@
 		},
 
 		set: function(prop) {
-			var args = Array.prototype.slice.apply(arguments, [1]);
+			var args = Array.prototype.slice.call(arguments, 1);
 			if (this.setter[prop]) {
 				this.setter[prop].apply(this, args);
 			} else {
-				this[prop] = args.join(',');
+				this[prop] = args.join(",");
 			}
 		},
 
 		get: function(prop) {
 			if (this.getter[prop]) {
-				return this.getter[prop].apply(this);
+				return this.getter[prop].call(this);
 			} else {
 				return this[prop];
 			}
@@ -373,223 +374,223 @@
 		setter: {
 			// ### x / y / z
 			//
-			//    .css({ x: 4 })       //=> 'translate(4px, 0)'
-			//    .css({ y: 10 })      //=> 'translate(4px, 10px)'
-			//    .css({ z: 5 })      //=> 'translate(4px, 10px) translateZ(5px)'
+			//    .css({ x: 4 })       => "translate(4px, 0)"
+			//    .css({ y: 10 })      => "translate(4px, 10px)"
+			//    .css({ z: 5 })       => "translate(4px, 10px) translateZ(5px)"
 			//
 			x: function(x) {
-				this.set('translate', x, null);
+				this.set("translate", x, null);
 			},
 
 			y: function(y) {
-				this.set('translate', null, y);
+				this.set("translate", null, y);
 			},
 
 			z: function(z) {
-				this.setProp('translateZ', z, 'px');
+				this.setProp("translateZ", z, "px");
 			},
 
 			translateX: function(x) {
-				this.set('x', x);
+				this.set("x", x);
 			},
 			translateY: function(y) {
-				this.set('y', y);
+				this.set("y", y);
 			},
 			translateZ: function(z) {
-				this.set('z', z);
+				this.set("z", z);
 			},
 
 			// ### translate
 			//
-			//    .css({ translate: '2, 5' })    //=> 'translate(2px, 5px)'
-			//    .css({ translate: '' })        //=> remove 'translate(2px, 5px)'
+			//    .css({ translate: "2, 5" })    => "translate(2px, 5px)"
+			//    .css({ translate: "" })        => remove "translate(2px, 5px)"
 			//
 			translate: function(x, y) {
 				if (y === undefined) {
 					y = x;
 				}
-				this.setDoubleProp('translate', x, y, 'px');
+				this.setDoubleProp("translate", x, y, "px");
 			},
 			// ### translate3d
 			//
-			//    .css('translate3d', [100,200,300]);    //=> 'translate(100px, 200px) translateZ(300px)'
+			//    .css("translate3d", [100,200,300]);    => "translate(100px, 200px) translateZ(300px)"
 			//
 			translate3d: function(x, y, z) {
 				if (y === undefined && z === undefined) {
 					z = y = x;
 				}
-				this.set('translate', x, y);
-				this.set('z', z);
+				this.set("translate", x, y);
+				this.set("z", z);
 			},
 
 			// ### scale
 			//
-			//    .css({ scale: 3 })        //=> 'scale(3)'
-			//    .css({ scale: '3,2' })    //=> 'scale(3,2)'
+			//    .css({ scale: 3 })        => "scale(3)"
+			//    .css({ scale: "3,2" })    => "scale(3,2)"
 			//
 			scale: function(x, y) {
 				if (y === undefined) {
 					y = x;
 				}
-				this.setDoubleProp('scale', x, y, '');
+				this.setDoubleProp("scale", x, y, "");
 			},
 			// ### scale3d
 			//
-			//    .css('scale3d', [1,2,3]);    //=> 'scale(1, 2) scaleZ(3)'
+			//    .css("scale3d", [1,2,3]);    => "scale(1, 2) scaleZ(3)"
 			//
 			scale3d: function(x, y, z) {
 				if (y === undefined && z === undefined) {
 					z = y = x;
 				}
-				this.set('scale', x, y);
-				this.set('scaleZ', z);
+				this.set("scale", x, y);
+				this.set("scaleZ", z);
 			},
 
 			scaleX: function(x) {
-				this.set('scale', x, null);
+				this.set("scale", x, null);
 			},
 
 			scaleY: function(y) {
-				this.set('scale', null, y);
+				this.set("scale", null, y);
 			},
 
 			scaleZ: function(z) {
-				this.setProp('scaleZ', z, '');
+				this.setProp("scaleZ", z, "");
 			},
 
 			// ### rotate
 			//
 			//    .css({ rotate: 30 })
-			//    .css({ rotate: '30' })
-			//    .css({ rotate: '30deg' })
+			//    .css({ rotate: "30" })
+			//    .css({ rotate: "30deg" })
 			//
 			rotate: function(theta) {
-				this.setProp('rotate', theta, 'deg');
+				this.setProp("rotate", theta, "deg");
 			},
 
 			rotateX: function(theta) {
-				this.setProp('rotateX', theta, 'deg');
+				this.setProp("rotateX", theta, "deg");
 			},
 
 			rotateY: function(theta) {
-				this.setProp('rotateY', theta, 'deg');
+				this.setProp("rotateY", theta, "deg");
 			},
 
 			rotateZ: function(theta) {
-				this.set('rotate', theta);
+				this.set("rotate", theta);
 			},
 
 			rotate3d: function(x, y, z) {
 				if (y === undefined && z === undefined) {
 					z = y = x;
 				}
-				this.set('rotateX', x);
-				this.set('rotateY', y);
-				this.set('rotate', z);
+				this.set("rotateX", x);
+				this.set("rotateY", y);
+				this.set("rotate", z);
 			},
 
 			skew: function(x, y) {
 				if (y === undefined) {
 					y = x;
 				}
-				this.set('skewX', x);
-				this.set('skewY', y);
+				this.set("skewX", x);
+				this.set("skewY", y);
 			},
 
 			skewX: function(x) {
-				this.setProp('skewX', x, 'deg');
+				this.setProp("skewX", x, "deg");
 			},
 
 			skewY: function(y) {
-				this.setProp('skewY', y, 'deg');
+				this.setProp("skewY", y, "deg");
 			}
 		},
 
 		getter: {
 			x: function() {
-				return this._translateX || 0;
+				return this._translateX || "0";
 			},
 
 			y: function() {
-				return this._translateY || 0;
+				return this._translateY || "0";
 			},
 
 			z: function() {
-				return this.translateZ || 0;
+				return this.translateZ || "0";
 			},
 
 			translateX: function() {
-				return this.get('x');
+				return this.get("x");
 			},
 			translateY: function() {
-				return this.get('y');
+				return this.get("y");
 			},
 			translateZ: function() {
-				return this.get('z');
+				return this.get("z");
 			},
 
 			translate: function() {
-				return [this.get('x'), this.get('y')];
+				return [this.get("x"), this.get("y")];
 			},
 
 			translate3d: function() {
-				return [this.get('x'), this.get('y'), this.get('z')];
+				return [this.get("x"), this.get("y"), this.get("z")];
 			},
 
 			scale: function() {
-				var x = this.get('scaleX'),
-					y = this.get('scaleY'),
+				var x = this.get("scaleX"),
+					y = this.get("scaleY"),
 					s = [x, y];
 
-				// '2,2' => 2
-				// '2,1' => [2,1]
+				// "2,2" => "2"
+				// "2,1" => ["2","1"]
 				return (s[0] === s[1]) ? s[0] : s;
 			},
 
 			scale3d: function() {
-				var x = this.get('scaleX'),
-					y = this.get('scaleY'),
-					z = this.get('scaleZ'),
+				var x = this.get("scaleX"),
+					y = this.get("scaleY"),
+					z = this.get("scaleZ"),
 					s = [x, y, z];
 
-				// '2,1,2' => [2,1,2]
+				// "2,1,2" => ["2","1","2"]
 				return s;
 			},
 
 			scaleX: function() {
-				return parseFloat(this._scaleX) || 1;
+				return this._scaleX || "1";
 			},
 
 			scaleY: function() {
-				return parseFloat(this._scaleY) || 1;
+				return this._scaleY || "1";
 			},
 
 			scaleZ: function() {
-				return parseFloat(this.scaleZ) || 1;
+				return this.scaleZ || "1";
 			},
 
 			rotate: function(theta) {
-				return this.rotate || 0;
+				return this.rotate || "0";
 			},
 
 			rotateX: function(theta) {
-				return this.rotateX || 0;
+				return this.rotateX || "0";
 			},
 
 			rotateY: function(theta) {
-				return this.rotateY || 0;
+				return this.rotateY || "0";
 			},
 
 			rotateZ: function(theta) {
-				return this.get('rotate');
+				return this.get("rotate");
 			},
 
 			rotate3d: function() {
-					return [this.get('rotateX'), this.get('rotateY'), this.get('rotate')];
+				return [this.get("rotateX"), this.get("rotateY"), this.get("rotate")];
 			},
 
 			skew: function() {
-				return [this.get('skewX'), this.get('skewY')];
+				return [this.get("skewX"), this.get("skewY")];
 			},
 
 			skewX: function() {
@@ -605,16 +606,16 @@
 		// If the property value is an empty string, the attributes are removed
 		// If the attribute values are not legal, ignore Settings
 		//
-		//    .css({'rotate': 30}).css({'rotate': ''})      //=> remove 'rotate(30deg)'
-		//    .css({'rotate': 30}).css({'rotate': null})    //=> 'rotate(30deg)'
+		//    .css({"rotate": 30}).css({"rotate": ""})      => remove "rotate(30deg)"
+		//    .css({"rotate": 30}).css({"rotate": null})    => "rotate(30deg)"
 		//
 		setProp: function(prop, value, u) {
-			if (value !== undefined && value !== '') {
+			if (value !== undefined && value !== "") {
 				if (isNaN(parseFloat(value))) {
 					value = undefined;
 				}
 			}
-			if (value === '') {
+			if (value === "") {
 				delete this[prop];
 			} else if (value !== undefined) {
 				this[prop] = unit(value, u);
@@ -626,66 +627,66 @@
 		// If one of the attribute value is empty string, is set to the default value
 		// If the attribute values are not legal, ignore Settings
 		//
-		//    .css({'scaleX': 3}).css({'scale': ''})          //=> remove 'scale(3, 1)'
-		//    .css({'scaleX': 3}).css({'scale': ['',4]})      //=> 'scale(1, 4)'
-		//    .css({'scaleX': 3}).css({'scale': [null,4]})    //=> 'scale(3, 4)'
+		//    .css({"scaleX": 3}).css({"scale": ""})          => remove "scale(3, 1)"
+		//    .css({"scaleX": 3}).css({"scale": ["",4]})      => "scale(1, 4)"
+		//    .css({"scaleX": 3}).css({"scale": [null,4]})    => "scale(3, 4)"
 		//
 		// Note
-		//    .css({'translate3d': '2,,'})  === .css({'translate3d': [2, '', '']})
-		//    .css({'translate3d': [2,,,]}) === .css({'translate3d': '2, null, null'})
+		//    .css({"translate3d": "2,,"})  === .css({"translate3d": [2, "", ""]})
+		//    .css({"translate3d": [2,,,]}) === .css({"translate3d": "2, null, null"})
 		//
 		setDoubleProp: function(prop, value1, value2, u) {
-			if (this['_' + prop + 'X'] === undefined) {
-				this['_' + prop + 'X'] = this.get(prop + 'X');
+			if (this["_" + prop + "X"] === undefined) {
+				this["_" + prop + "X"] = this.get(prop + "X");
 			}
-			if (this['_' + prop + 'Y'] === undefined) {
-				this['_' + prop + 'Y'] = this.get(prop + 'Y');
+			if (this["_" + prop + "Y"] === undefined) {
+				this["_" + prop + "Y"] = this.get(prop + "Y");
 			}
 
-			if (value1 !== undefined && value1 !== '') {
+			if (value1 !== undefined && value1 !== "") {
 				if (isNaN(parseFloat(value1))) {
 					value1 = undefined;
 				}
 			}
-			if (value2 !== undefined && value2 !== '') {
+			if (value2 !== undefined && value2 !== "") {
 				if (isNaN(parseFloat(value2))) {
 					value2 = undefined;
 				}
 			}
 
-			if (value1 === '' && value2 === '') {
-				delete this['_' + prop + 'X'];
-				delete this['_' + prop + 'Y'];
+			if (value1 === "" && value2 === "") {
+				delete this["_" + prop + "X"];
+				delete this["_" + prop + "Y"];
 				delete this[prop];
 			} else {
-				if (value1 === '') {
-					delete this['_' + prop + 'X'];
-					value1 = this.get(prop + 'X');
-				} else if (value2 === '') {
-					delete this['_' + prop + 'Y'];
-					value2 = this.get(prop + 'Y');
+				if (value1 === "") {
+					delete this["_" + prop + "X"];
+					value1 = this.get(prop + "X");
+				} else if (value2 === "") {
+					delete this["_" + prop + "Y"];
+					value2 = this.get(prop + "Y");
 				}
 
 				if (value1 !== undefined) {
-					this['_' + prop + 'X'] = unit(value1, u);
+					this["_" + prop + "X"] = unit(value1, u);
 				}
 				if (value2 !== undefined) {
-					this['_' + prop + 'Y'] = unit(value2, u);
+					this["_" + prop + "Y"] = unit(value2, u);
 				}
 
-				if (prop === 'scale') {
-					this[prop] = this['_' + prop + 'X'] === this['_' + prop + 'Y'] ?
-						this['_' + prop + 'X'] :
-						this['_' + prop + 'X'] + ',' + this['_' + prop + 'Y'];
+				if (prop === "scale") {
+					this[prop] = this["_" + prop + "X"] === this["_" + prop + "Y"] ?
+						this["_" + prop + "X"] :
+						this["_" + prop + "X"] + "," + this["_" + prop + "Y"];
 				} else {
-					this[prop] = this['_' + prop + 'X'] + ',' + this['_' + prop + 'Y'];
+					this[prop] = this["_" + prop + "X"] + "," + this["_" + prop + "Y"];
 				}
 			}
 		},
 
 		// ### parse()
 		//
-		//    'rotate(90) scale(4)'  =>  self.setFromString('rotate', 90); self.setFromString('scale', 4);
+		//    "rotate(90) scale(4)"  =>  self.setFromString("rotate", 90); self.setFromString("scale", 4);
 		//
 		parse: function(str) {
 			var self = this;
@@ -700,142 +701,210 @@
 			for (var i in this) {
 				if (this.hasOwnProperty(i)) {
 					if ((!support.transform3d) && (
-							(i === 'rotateX') ||
-							(i === 'rotateY') ||
-							(i === 'translateZ') ||
-							(i === 'scaleZ') ||
-							(i === 'perspective'))) {
+							(i === "rotateX") ||
+							(i === "rotateY") ||
+							(i === "translateZ") ||
+							(i === "scaleZ") ||
+							(i === "perspective"))) {
 						continue;
 					}
 
-					if (i[0] !== '_') {
-						re.push(i + '(' + this[i] + ')');
+					if (i[0] !== "_") {
+						re.push(i + "(" + this[i] + ")");
 					}
 				}
 			}
 
-			return re.join(' ');
+			return re.join(" ");
 		}
 	};
 
 
 	// 调用队列
-	function callOrQueue(self, queue, fn) {
+	function callOrQueue(self, queue, callback) {
 		if (queue === true) {
-			self.queue(fn);
+			self.queue(callback);
 		} else if (queue) {
-			self.queue(queue, fn);
+			self.queue(queue, callback);
 		} else {
 			self.each(function() {
-				fn.call(this);
+				callback.call(this);
 			});
 		}
 	}
 
-	// ### getProperties(dict)
-	// 返回属性对应的 transition-property
-	function getProperties(props) {
-		var re = [];
-
-		$.each(props, function(key) {
-			key = $.camelCase(key); // Convert 'text-align' => 'textAlign'
-			key = propertyMap[key] || $.cssProps[key] || key;
-
-			// Get vendor specify propertie
-			// For example 'transform-origin' 'perspective'
-			if (support[key]) {
-				key = uncamel(support[key]);
-			}
-
-			if ($.inArray(key, re) === -1) {
-				re.push(key);
-			}
-		});
-
-		return re;
+	function finishCall(self, callback, next) {
+		if (typeof callback === "function") {
+			callback.call(self);
+		}
+		if (typeof next === "function") {
+			next();
+		}
 	}
+
 
 	// ### getTransition()
 	// Returns the transition string to be used for the `transition` CSS property.
 	//
-	//    getTransition({ opacity: 1, rotate: 30 }, 500, 'ease');
-	//    //=> 'opacity 500ms ease, -webkit-transform 500ms ease'
+	//    getTransition({ opacity: 1, rotate: 30 }, 500, "ease");
+	//    => "opacity 500ms ease, -webkit-transform 500ms ease"
 	//
-	function getTransition(properties, duration, easing) {
-		// Get the CSS properties needed.
-		var props = getProperties(properties);
+	function getTransition(properties, duration, easing, specialEasing) {
 
-		// Build the duration/easing/delay attributes for it.
-		var attribs = '' + toMS(duration) + ' ' + easing;
+		// 获取属性对应的 transition-property 和 transition-timing-function
+		// {marginTop: 100, paddingLeft: 200} => {"margin-top": "swing", "padding-left": "swing"}
+		var props = {};
+		for (var p in properties) {
+			var key = $.camelCase(p); // Convert "text-align" => "textAlign"
+			key = propertyMap[key] || $.cssProps[key] || key;
+
+			// Get vendor specify propertie
+			// For example "transform-origin" "perspective"
+			if (support[key]) {
+				key = support[key];
+			}
+
+			if (!(key in props)) {
+				props[key] = specialEasing[p];
+			}
+		}
+
+		var MS = toMS(duration);
 
 		// For more properties, add them this way:
-		// 'margin 200ms ease, padding 200ms ease, ...'
+		// "margin 200ms ease, padding 200ms ease, ..."
 		var transitions = [];
-		$.each(props, function(i, name) {
-			transitions.push(name + ' ' + attribs);
-		});
+		for (var p in props) {
+			transitions.push(uncamel(p) + " " + MS + " " + (props[p]));
+		}
 
-		return transitions.join(',');
+		return transitions.join(",");
+	}
+
+	// ### disposeSpecialValue()
+	//
+	//    .animate({left: "100"})     => .css({left: 0}).animate({left: 100});
+	//    .animate({opacity: "show"}) => .css({opacity: 0}).show().animate({opacity: 1});
+	//    .animate({opacity: "hide"}) => .css({opacity: 1}).animate({opacity: 0}, function() { $(this).hide() });
+	//
+	function disposeSpecialValue($self, props, startProps, callback) {
+		var endProps = {},
+			hidden = $self.css("display") === "none",
+			show;
+		for (var p in props) {
+			var value = props[p],
+				curValue = $self.css(p);
+
+			if (value === "show" || value === "toggle") {
+				if (hidden) {
+					show = true;
+					value = props[p] = curValue;
+					curValue = 0;
+					endProps[p] = "";
+				} else {
+					delete props[p];
+				}
+			} else if (value === "hide" || value === "toggle") {
+				if (!hidden) {
+					show = false;
+					value = props[p] = 0;
+					endProps[p] = "";
+				} else {
+					delete props[p];
+				}
+			}
+
+			curValue = isNaN(parseFloat(curValue)) ? 0 : curValue; // 主要针对定位属性，如：left默认为auto
+
+			curValue = convertUnit($self, curValue, getUnit(value));
+			if (curValue == value) {
+				delete props[p];
+				continue;
+			}
+
+			startProps[p] = curValue;
+		}
+
+		var fn = callback;
+
+		if (show === true) {
+			$self.css({
+				"display": "block",
+				"overflow": "hidden"
+			});
+			endProps["overflow"] = "";
+		} else if (show === false) {
+			$self.css({
+				"overflow": "hidden"
+			});
+			endProps["display"] = "none";
+			endProps["overflow"] = "";
+		}
+
+		if (show !== undefined) {
+			fn = function() {
+				$self.css(endProps);
+				if (typeof callback === "function") callback.call(this);
+			};
+		}
+
+		return fn;
 	}
 
 	// ## transition()
-	function transition(properties, duration, easing, callback, queue) {
-		var self = this;
-
-		// Get the total time
-		duration = parseInt(duration, 10);
-
-		var finishCall = function(self, next) {
-			if (typeof callback === 'function') {
-				callback.apply(self);
-			}
-			if (typeof next === 'function') {
-				next();
-			}
-		}
-
-		// If there's nothing to do...
-		if (duration === 0) {
-			var fn = function(next) {
-				$(this).css(properties);
-				finishCall(this, next);
-			};
-
-			callOrQueue(self, queue, fn);
-			return self;
-		}
-
+	function transition(properties, duration, easing, callback, queue, specialEasing) {
 		// Build the `transition` property.
-		var transitionValue = getTransition(properties, duration, easing);
-		self.each(function() {
+		var transitionValue = getTransition(properties, duration, easing, specialEasing);
+		this.each(function() {
 			// 用于分别保存每一个对象的 transition 属性值列表
-			if (!$.isArray($.data(this, 'transitionValueList'))) $.data(this, 'transitionValueList', []);
+			if (!$.isArray($.data(this, "transitionValueList"))) $.data(this, "transitionValueList", []);
 		});
 
 		var run = function(next) {
-			var $this = $(this);
-			var bound = false;
+			var self = this,
+				$self = $(self),
+				startTime = $.now(),
+				startProps = {};
+
+			// 处理特殊值，并获取起始样式
+			callback = disposeSpecialValue($self, properties, startProps, callback);
+			var empty = $.isEmptyObject(properties),
+				hidden = $self.is(":hidden"); // 如果元素为隐藏状态，则无法触发 transitionend 事件，并且 transition 会停止
+
+			// Get the total time
+			duration = parseInt(duration, 10);
+			// If there"s nothing to do...
+			if (duration === 0 || empty || hidden) {
+				if (!empty) $self.css(properties);
+				finishCall(self, callback, next);
+				return;
+			}
+
+			$self.css(startProps);
+			self.offsetWidth; // 强制刷新
 
 			// Prepare the callback.
-			var cb = function() {
+			var cb = function(e) {
+				if (e && e.currentTarget !== e.target) return;
+
 				var i = $.inArray(timer, $.timers);
 				if (i >= 0) $.timers.splice(i, 1);
 
-				if (bound) {
-					$this.unbind(support.transitionEnd, cb);
+				if (bound === true) {
+					$self.unbind(support.transitionEnd, cb);
 				}
 
 				i = $.inArray(transitionValue, transitionValueList);
 				if (i >= 0) transitionValueList.splice(i, 1);
-				this.style[support.transition] = transitionValueList.join(',');
+				self.style[support.transition] = transitionValueList.join(",");
 
-				finishCall(this, next);
+				finishCall(self, callback, next);
 			};
 
 			var stop = function(gotoEnd) {
 				if (bound) {
 					if (bound === true) {
-						$this.unbind(support.transitionEnd, cb);
+						$self.unbind(support.transitionEnd, cb);
 					} else {
 						window.clearTimeout(bound);
 					}
@@ -843,19 +912,22 @@
 
 				var i = $.inArray(transitionValue, transitionValueList);
 				if (i >= 0) transitionValueList.splice(i, 1);
-				this.style[support.transition] = transitionValueList.join(',');
+				self.style[support.transition] = transitionValueList.join(",");
 
 				if (gotoEnd) {
-					finishCall(this, next);
+					finishCall(self, callback, next);
 				} else {
-					var bezierY = cubicBezier.getY(($.now() - startTime) / duration);
 					var curProp = {};
 					for (var p in properties) {
-						var v = properties[p],
-							u = getUnit(v);
-						curProp[p] = (parseFloat(v) - startProp[p]) * bezierY + startProp[p] + u;
+						var startValue = parseFloat(startProps[p]),
+							endValue = properties[p],
+							u = getUnit(endValue);
+
+						setCubicBezier(specialEasing[p]);
+						var bezierY = cubicBezier.getY(($.now() - startTime) / duration);
+						curProp[p] = (parseFloat(endValue) - startValue) * bezierY + startValue + u;
 					}
-					$this.css(curProp);
+					$self.css(curProp);
 				}
 			};
 
@@ -867,106 +939,149 @@
 				// 注释：animate 的动画中 timer() 的返回值为当前动画的剩余时间
 				return true;
 			};
-			timer.elem = this;
+			timer.elem = self;
 			timer.queue = queue;
-			timer.anim = { stop: $.proxy(stop, this) };
+			timer.anim = { stop: stop };
 			$.timers.push(timer);
 
+			var bound = false;
 			if (support.transitionEnd) {
 				bound = true;
-				$this.bind(support.transitionEnd, cb);
+				$self.bind(support.transitionEnd, cb);
 			} else {
-				// Fallback to timers if the 'transitionend' event isn't supported.
-				bound = window.setTimeout($.proxy(cb, this), duration);
-			}
-
-			// 创建三次贝塞尔对象
-			var cubicBezier = createCubicBezier(easing);
-			var startTime = $.now();
-			var startProp = {};
-			for (var p in properties) {
-				var v = parseFloat($this.css(p));
-				startProp[p] = isNaN(v) ? 0 : v; // 主要针对定位属性，如：left默认为auto
-				$this.css(p, startProp[p]);
-				$this.css(p); // 强制刷新
+				// Fallback to timers if the "transitionend" event isn"t supported.
+				bound = window.setTimeout(cb, duration);
 			}
 
 			// Apply transitions.
-			var transitionValueList = $.data(this, 'transitionValueList');
+			var transitionValueList = $.data(self, "transitionValueList");
 			transitionValueList.push(transitionValue);
-			this.style[support.transition] = transitionValueList.join(',');
 
-			$this.css(properties);
-		};
-
-		// Defer running. This allows the browser to paint any pending CSS it hasn't
-		// painted yet before doing the transitions.
-		var deferredRun = function(next) {
-			this.offsetWidth; // force a repaint
-			run.call(this, next);
+			self.style[support.transition] = transitionValueList.join(",");
+			$self.css(properties);
 		};
 
 		// 模拟 .finish() 所需要的方法
-		deferredRun.finish = function() {
+		run.finish = function() {
 			$(this).css(properties);
-			finishCall(this);
+			finishCall(this, callback);
 		};
 
-		// Use jQuery's fx queue.
-		callOrQueue(self, queue, deferredRun);
+		// Use jQuery"s fx queue.
+		callOrQueue(this, queue, run);
 
-		return self;
+		return this;
+	}
+
+
+	// ### propFilter()
+	// jQuery 源码使用该方法来过滤出属性和缓动
+	//
+	//    props         = {left: [200, "easeInBack"], width: [100, "linear"], height: 200}
+	//    specialEasing = {height: "swing"};
+	//
+	//    propFilter(props, specialEasing);
+	//
+	//    => props         == {left: 200, width: 100, height: 200}
+	//       specialEasing == {left: "easeInBack", width: "linear", height: "swing"}
+	//
+	function propFilter(props, specialEasing) {
+		var index, name, easing, value, hooks;
+
+		// camelCase, specialEasing and expand cssHook pass
+		for (index in props) {
+			name = $.camelCase(index);
+			easing = specialEasing[name];
+			value = props[index];
+			if ($.isArray(value)) {
+				easing = value[1];
+				value = props[index] = value[0];
+			}
+
+			if (index !== name) {
+				props[name] = value;
+				delete props[index];
+			}
+
+			hooks = $.cssHooks[name];
+			if (hooks && "expand" in hooks) {
+				value = hooks.expand(value);
+				delete props[name];
+
+				// not quite $.extend, this wont overwrite keys already present.
+				// also - reusing "index" from above because we have the correct "name"
+				for (index in value) {
+					if (!(index in props)) {
+						props[index] = value[index];
+						specialEasing[index] = easing;
+					}
+				}
+			} else {
+				specialEasing[name] = easing;
+			}
+		}
 	}
 
 
 	// ### Compatible with the following written
 	// Example:
-	//    .animate.({'translate3d': [100, 200, 300]});
-	//    .animate.({'scale': [1, 2]});
-	//    .animate.({'scale': '1,2'});
+	//    .animate.({"translate3d": [100, 200, 300]});
+	//    .animate.({"scale": [1, 2]});
+	//    .animate.({"scale": "1,2"});
 	var _animate = $.fn.animate;
-	var xyz = ['X', 'Y', 'Z'];
-	var checkProp = [
-		'translate',
-		'translate3d',
-		'scale',
-		'scale3d',
-		'rotate3d',
-		'skew'
-	];
-
 	$.fn.animate = function(properties, duration, easing, callback) {
-		var queue = true;
-		var originalDuration = duration;
-		var originalEasing = easing;
+		var queue = true,
+			specialEasing = {},
+			originalProperties = $.extend({}, properties),
+			originalDuration = duration,
+			originalEasing = easing,
+			originalCallback = callback;
 
-		if (typeof duration === 'function') { // Account for `.transition(properties, callback)`.
+		if (typeof duration === "function") { // Account for `.transition(properties, callback)`.
 			callback = duration;
 			duration = undefined;
-		} else if (typeof duration === 'object') { // Account for `.transition(properties, options)`.
+		} else if (typeof duration === "object") { // Account for `.transition(properties, options)`.
+			originalDuration = $.extend({}, duration);
 			easing = duration.easing;
-			queue = typeof duration.queue === 'undefined' ? true : duration.queue;
+			queue = typeof duration.queue === "undefined" ? true : duration.queue;
+			specialEasing = duration.specialEasing || specialEasing;
 			callback = duration.complete;
 			duration = duration.duration;
-		} else if (typeof easing === 'function') { // Account for `.transition(properties, duration, callback)`.
+		} else if (typeof easing === "function") { // Account for `.transition(properties, duration, callback)`.
 			callback = easing;
 			easing = undefined;
 		}
 		// Set defaults. (`400` duration, `ease` easing)
-		if (typeof duration === 'undefined') {
+		if (typeof duration === "undefined") {
 			duration = $.fx.speeds._default;
 		}
-		if (typeof easing === 'undefined') {
+		if (typeof easing === "undefined") {
 			easing = $.cssEase._default;
 		}
 
 		// 拆分属性
 		resolveProp(properties);
-		// 确保缓动为贝塞尔函数
-		easing = convertEase(easing);
-		// 如果不支持 transition 动画，或者不支持该缓动类型，则回退到 animate 实现
-		if (!support.transition || typeof easing === 'undefined') {
-			return _animate.apply(this, [properties, originalDuration, originalEasing, callback]);
+
+		var nonsupport = false;
+		if ("scrollLeft" in properties || "scrollTop" in properties) {
+			nonsupport = true;
+		}
+		if (!nonsupport) {
+			// 将属性名与对应的缓动过滤出来
+			propFilter(properties, specialEasing);
+			for (var p in specialEasing) {
+				// 将缓动转换为贝塞尔函数
+				specialEasing[p] = convertEase(specialEasing[p] || easing);
+				if (typeof specialEasing[p] === "undefined") {
+					nonsupport = true;
+					break;
+				}
+			}
+		}
+
+		// 如果不支持 transition 动画，或者不支持该缓动类型，再或者动画属性中包含不支持的属性，则使用 animate 实现
+		if (!support.transition || nonsupport) {
+			return _animate.call(this, originalProperties, originalDuration, originalEasing, originalCallback);
 		}
 
 		// Solve the <img> (x, y) animation bug always starting from 0
@@ -976,28 +1091,55 @@
 		});
 
 		// normalize opt.queue - true/undefined/null -> "fx"
-		if ( queue == null || queue === true ) {
+		if (queue == null || queue === true) {
 			queue = "fx";
 		}
 
-		return transition.apply(this, [properties, duration, easing, callback, queue]);
+		return transition.call(this, properties, duration, easing, callback, queue, specialEasing);
 	}
 
-	// ### resolveProp(prop)
+	// ### resolveProp(props)
 	//
-	//    {scale: '3,2'} => {scaleX: 3, scaleY: 2}
+	//    {scale: "3,2"} => {scaleX: 3, scaleY: 2}
 	//
-	function resolveProp(prop) {
+	var xyz = ["X", "Y", "Z"],
+		checkProp = [
+			"translate",
+			"translate3d",
+			"scale",
+			"scale3d",
+			"rotate3d",
+			"skew"
+		];
+	function resolveProp(props) {
 		for (var i = 0, l = checkProp.length; i < l; i++) {
 			var p = checkProp[i];
-			if (p in prop) {
-				var val = prop[p];
-				delete prop[p];
+			if (p in props) {
+				var val = props[p];
+				delete props[p];
 
-				var is3d = p.indexOf('3d') !== -1,
+				// 区分 [[1,2], "easeOutBack"] 和 [1,2]
+				var easeing;
+				if ($.isArray(val)) {
+					var val0 = val[0],
+						val1 = val[1];
+
+					if ($.isArray(val0)
+					|| (typeof val0 === "string" && val0.split(",").length > 1)
+					|| (val1 && isNaN(parseFloat(val1)))) {
+						val = val0;
+						easeing = val1;
+					}
+				}
+
+				var is3d = p.indexOf("3d") !== -1,
 					arr;
-				if (val.constructor !== Array) {
-					arr = (typeof val === 'string') ? val.split(',') : [val];
+
+				if ($.isArray(val)) {
+					arr = val;
+				} else {
+					arr = (typeof val === "string") ? val.split(",") : [val];
+					// {scale: [3]} => {scale: [3, 3]}
 					if (arr.length < 2) {
 						if (is3d) {
 							arr[2] = arr[1] = arr[0];
@@ -1005,19 +1147,17 @@
 							arr[1] = arr[0];
 						}
 					}
-				} else {
-					arr = val;
 				}
 
 				if (is3d) p = p.slice(0, -2);
-				var def = p === 'scale' ? 1 : 0;
-
+				var def = p === "scale" ? 1 : 0;
+				// {scale: [2, 3]} => {scaleX: 2, scaleY: 3}
 				for (var j = 0; j < 3; j++) {
 					val = arr[j];
 					if (val || val === 0) {
-						prop[p + xyz[j]] = val;
-					} else if (val === '') {
-						prop[p + xyz[j]] = def;
+						props[p + xyz[j]] = easeing ? [val, easeing] : val;
+					} else if (val === "") {
+						props[p + xyz[j]] = easeing ? [def, easeing] : def;
 					}
 				}
 			}
@@ -1025,71 +1165,110 @@
 	}
 
 
-
 	// ### uncamel(str)
 	// Converts a camelcase string to a dasherized string.
 	//
-	//    'marginLeft' => 'margin-left'
+	//    "marginLeft"              => "margin-left"
+	//    "webkitTransformOrigin"   => "-webkit-transform-origin"
 	//
 	function uncamel(str) {
-		return str.replace(/([A-Z])/g, function(letter) {
-			return '-' + letter.toLowerCase();
-		});
+		if (!str.indexOf("webkit")) str = "W" + str.substr(1);
+		if (!str.indexOf("moz") || !str.indexOf("ms")) str = "M" + str.substr(1);
+		return str.replace(/([A-Z])/g, "-$1").toLowerCase();
 	}
 
 	// ### unit(number, unit)
 	//
-	//    unit(30, 'px')      //=> '30px'
-	//    unit('30%', 'px')   //=> '30%'
+	//    unit(30, "px")      => "30px"
+	//    unit("30%", "px")   => "30%"
 	//
 	function unit(i, units) {
-		if ((typeof i === 'string') && (!i.match(/^[\-0-9\.]+$/))) {
+		if ((typeof i === "string") && (!i.match(/^[\-0-9\.]+$/))) {
 			return i;
 		} else {
-			return '' + i + units;
+			return "" + i + units;
 		}
 	}
 
 	// ### getUnit(str)
 	//
-	//    getUnit('30px')      //=> 'px'
-	//    getUnit('30%')       //=> '%'
+	//    getUnit("30px")      => "px"
+	//    getUnit("30%")       => "%"
 	//
 	function getUnit(value) {
-		if (typeof value !== 'string') return '';
+		if (typeof value !== "string") return "";
 		var s = value.match(/^[\-0-9\.]+/);
-		if (!s) return '';
+		if (!s) return "";
 		return value.substr(s[0].length);
+	}
+
+	// ### convertUnit()
+	// 将值转换为指定单位的新值
+	//
+	//    convertUnit($self, 100px, %)  =>  (100 / $self.outerWidth()) * 100 + "%"
+	//
+	function convertUnit($self, value, u) {
+		var oldUnit = getUnit(value),
+			oldValue = parseFloat(value),
+			newValue = value;
+
+		var px = "px",
+			em = "em",
+			pe = "%";
+
+		if (oldUnit && u && oldUnit != u) {
+			if (u === px) {
+				if (oldUnit === pe) {
+					newValue = oldValue * $self.outerWidth() + px;
+				} else if (oldUnit === em) {
+					newValue = oldValue * parseFloat($self.css("font-size")) + px;
+				}
+			} else if (u === pe) {
+				if (oldUnit === px) {
+					newValue = (oldValue / $self.outerWidth()) * 100 + pe;
+				} else if (oldUnit === em) {
+					newValue = (oldValue * parseFloat($self.css("font-size")) / $self.outerWidth()) * 100 + pe;
+				}
+			} else if (u === em) {
+				if (oldUnit === px) {
+					newValue = oldValue / parseFloat($self.css("font-size")) + em;
+				} else if (oldUnit === pe) {
+					newValue = oldValue * $self.outerWidth() / parseFloat($self.css("font-size")) + em;
+				}
+			}
+		}
+
+		return newValue;
 	}
 
 	// ### toMS(duration)
 	// Converts given `duration` to a millisecond string.
 	//
-	//    toMS('fast') => $.fx.speeds[i] => '200ms'
-	//    toMS('normal') //=> $.fx.speeds._default => '400ms'
-	//    toMS(10) //=> '10ms'
-	//    toMS('100ms') //=> '100ms'
+	//    toMS("fast") => $.fx.speeds[i] => "200ms"
+	//    toMS("normal") => $.fx.speeds._default => "400ms"
+	//    toMS(10) => "10ms"
+	//    toMS("100ms") => "100ms"
 	//
 	function toMS(duration) {
 		var i = duration;
 
-		// Allow string durations like 'fast' and 'slow', without overriding numeric values.
-		if (typeof i === 'string' && (!i.match(/^[\-0-9\.]+/))) {
+		// Allow string durations like "fast" and "slow", without overriding numeric values.
+		if (typeof i === "string" && (!i.match(/^[\-0-9\.]+/))) {
 			i = $.fx.speeds[i] || $.fx.speeds._default;
 		}
 
-		return unit(i, 'ms');
+		return unit(i, "ms");
 	}
 
 	// ### getArg(str)
 	// 获取字符串表达式中括号内的参数数组
 	//
-	//    'cubic-bezier(0,0,1,1)' => [0,0,1,1]
+	//    "cubic-bezier(0,0,1,1)" => [0,0,1,1]
 	//
 	function getArg(str) {
 		var s = str.match(/\(.*\)$/);
 		if (s) {
-			var args = s[0].slice(1, -1).split(',');
+			var args = s[0].slice(1, -1).split(",");
 			for (var i = 0, l = args.length; i < l; i++) {
 				var arg = parseFloat(args[i]);
 				args[i] = isNaN(arg) ? undefined : arg;
@@ -1097,12 +1276,6 @@
 			return args;
 		}
 		return null;
-	}
-
-	// 根据缓动函数，创建三次贝塞尔对象
-	function createCubicBezier(easing) {
-		var args = getArg(easing);
-		return new CubicBezier([args[0], args[1]], [args[2], args[3]]);
 	}
 
 	/**
@@ -1113,11 +1286,8 @@
 	 * @param {array} begin 表示起始点，默认为[0,0]
 	 * @param {array} end 表示结束点，默认为[1,1]
 	 */
-	function CubicBezier(c1, c2, begin, end) {
-		this.c1 = new Point(c1[0], c1[1]);
-		this.c2 = new Point(c2[0], c2[1]);
-		this.begin = begin ? new Point(begin[0], begin[1]) : new Point(0, 0);
-		this.end = end ? new Point(end[0], end[1]) : new Point(1, 1);
+	function CubicBezier() {
+		this.set.apply(this, arguments);
 	}
 
 	CubicBezier.prototype = {
@@ -1134,6 +1304,13 @@
 			return (this._bezierFunc(p, t, targ) - this._bezierFunc(p, t - dt, targ)) / dt;
 		},
 
+		set: function(c1, c2, begin, end) {
+			this.c1 = c1 ? new Point(c1[0], c1[1]) : new Point(0, 0);
+			this.c2 = c2 ? new Point(c2[0], c2[1]) : new Point(1, 1);
+			this.begin = begin ? new Point(begin[0], begin[1]) : new Point(0, 0);
+			this.end = end ? new Point(end[0], end[1]) : new Point(1, 1);
+		},
+
 		/**
 		 * @author 已知x，求y
 		 * @param {number} x 参数表示一个在贝塞尔曲线上X轴方向的向量，取值在 0.0 - 1.0 之间
@@ -1142,10 +1319,10 @@
 		getY: function(x) {
 			var t = .5; //设置t的初值
 			for (var i = 0; i < 1000; i++) {
-				t = t - this._bezierFunc('x', t, x) / this._deltaBezierFunc('x', t, x);
-				if (this._bezierFunc('x', t, x) === 0) break;
+				t = t - this._bezierFunc("x", t, x) / this._deltaBezierFunc("x", t, x);
+				if (this._bezierFunc("x", t, x) === 0) break;
 			}
-			return this._bezierFunc('y', t, 0);
+			return this._bezierFunc("y", t, 0);
 		}
 
 	}
@@ -1154,6 +1331,13 @@
 	function Point(x, y) {
 		this.x = x || 0;
 		this.y = y || 0;
+	}
+
+	// 根据缓动函数，创建三次贝塞尔对象
+	var cubicBezier = new CubicBezier();
+	function setCubicBezier(easing) {
+		var args = getArg(easing);
+		cubicBezier.set([args[0], args[1]], [args[2], args[3]]);
 	}
 
 	return $;
