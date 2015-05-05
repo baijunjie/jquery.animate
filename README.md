@@ -148,11 +148,13 @@ So, if this happens, Easing program will find the first as the <b>Transform</b> 
 ```js
 $("div").animate({
 	x: [300, "easeOutBack"],
-	y: [200, "linear"]
+	y: [200, "linear"],
+	scale: [3, "easeInBack"]
 });
 
 // CSS will be like this
 div {
+	transform: translate(300px, 200px) scale(3);
 	transition: transform 2000ms easeOutBack;
 }
 
