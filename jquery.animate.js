@@ -1309,23 +1309,27 @@
 	//
 	function calculateColor(begin, end, pos) {
 		var len = Math.min(begin.length, end.length),
-			r = begin[0] + pos * (end[0] - begin[0]),
-			g = begin[1] + pos * (end[1] - begin[1]),
-			b = begin[2] + pos * (end[2] - begin[2]),
-			color = "rgb";
+			color = "rgb",
+			dr = pos * (end[0] - begin[0]),
+			dg = pos * (end[1] - begin[1]),
+			db = pos * (end[2] - begin[2]),
+			r = begin[0] + dr,
+			g = begin[1] + dg,
+			b = begin[2] + db,
+			a = 1;
 		if (len > 3) {
 			color += "a";
-			var a = parseFloat(begin[3] + pos * (end[3] - begin[3]), 10);
-			r /= a;
-			g /= a;
-			b /= a;
+			a = parseFloat(begin[3] + pos * (end[3] - begin[3]), 10);
+			r = begin[0] + dr / a * end[3];
+			g = begin[1] + dg / a * end[3];
+			b = begin[2] + db / a * end[3];
 		}
 		r = parseInt(r, 10);
 		g = parseInt(g, 10);
 		b = parseInt(b, 10);
 		color += "(" + r + "," + g + "," + b ;
 		if (len > 3) { color += "," + a; }
-		color += ")";
+		color += ")";console.log(begin, end, color)
 		return color;
 	}
 
