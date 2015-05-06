@@ -7,7 +7,7 @@ Rewrite the <b>jQuery.animate</b>'s default behavior, The priority use <b>CSS3 T
 
 ## 为什么使用？ / Why use?
 
-这个插件是对 <b>jQuery.animate</b> 方法的改写，您不需要考虑修改您的代码，您只需要导入插件，就可以让你所有的 <b>jQuery</b> 动画转化为 <b>CSS3 Transition</b>。<br>
+这个插件是对 <b>jQuery.animate</b> 方法的改写，你不需要考虑修改你的代码，你只需要导入插件，就可以让你所有的 <b>jQuery</b> 动画转化为 <b>CSS3 Transition</b>。<br>
 
 This plugin is the rewriting of <b>jQuery.animate</b> method, you do not need to consider modifying your code, you just need to include plug-in, can let all of your <b>jQuery</b> animation into <b>CSS3 Transition</b>.<br>
 
