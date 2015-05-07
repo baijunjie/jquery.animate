@@ -1,5 +1,5 @@
 /*!
- * jQuery Animate v1.2 - By CSS3 transition
+ * jQuery Animate v1.3 - By CSS3 transition
  * @author baijunjie
  *
  * https://github.com/baijunjie/jquery.animate
@@ -788,7 +788,7 @@
 	//    .animate({opacity: "hide"}) => .css({opacity: 1}).animate({opacity: 0}, function() { $(this).hide() });
 	//
 	function disposeSpecialValue($self, props, startProps, callback) {
-		var endProps = {},
+		var endStyles = {},
 			hidden = $self.css("display") === "none",
 			show;
 		for (var p in props) {
@@ -800,19 +800,20 @@
 					show = true;
 					value = curValue;
 					curValue = 0;
-					endProps[p] = "";
+					endStyles[p] = "";
 				} else {
-					delete props[p];
+					value = undefined;
 				}
 			} else if (value === "hide" || value === "toggle") {
 				if (!hidden) {
 					show = false;
 					value = 0;
-					endProps[p] = "";
+					endStyles[p] = "";
 				} else {
-					delete props[p];
+					value = undefined;
 				}
 			}
+
 
 			// 处理颜色值
 			if (typeof value === "string" && isNaN(parseFloat(value))) {
@@ -829,7 +830,8 @@
 				curValue = convertUnit($self, curValue, getUnit(value));
 			}
 
-			if ((curValue == value)
+			if ((typeof value === "undefined")
+			|| (curValue == value)
 			|| (!!color ^ !!curColor)) {
 				delete props[p];
 				continue;
@@ -846,18 +848,18 @@
 				"display": "block",
 				"overflow": "hidden"
 			});
-			endProps["overflow"] = "";
+			endStyles["overflow"] = "";
 		} else if (show === false) {
 			$self.css({
 				"overflow": "hidden"
 			});
-			endProps["display"] = "none";
-			endProps["overflow"] = "";
+			endStyles["display"] = "none";
+			endStyles["overflow"] = "";
 		}
 
 		if (show !== undefined) {
 			fn = function() {
-				$self.css(endProps);
+				$self.css(endStyles);
 				if (typeof callback === "function") callback.call(this);
 			};
 		}
@@ -867,29 +869,40 @@
 
 	// ## transition()
 	function transition(properties, duration, easing, callback, queue, specialEasing) {
-		// Build the `transition` property.
-		var transitionValue = getTransition(properties, duration, easing, specialEasing);
 		this.each(function() {
+			var $self = $(this),
+				startProps = {},
+				endProps = $.extend(true, {}, properties);
+
 			// 用于分别保存每一个对象的 transition 属性值列表
-			if (!$.isArray($.data(this, "transitionValueList"))) $.data(this, "transitionValueList", []);
+			if (!$.isArray($self.data("transitionValueList"))) $self.data("transitionValueList", []);
+
+			// 处理特殊值，并获取起始样式
+			var callback = disposeSpecialValue($self, endProps, startProps, callback);
+
+			$self.data({
+				"transitionStartProps": startProps,
+				"transitionEndProps": endProps,
+				"transitionCallback": callback
+			});
 		});
 
 		var run = function(next) {
 			var self = this,
 				$self = $(self),
 				startTime = $.now(),
-				startProps = {};
+				startProps = $self.data("transitionStartProps"),
+				endProps = $self.data("transitionEndProps");
+				callback = $self.data("transitionCallback");
 
-			// 处理特殊值，并获取起始样式
-			callback = disposeSpecialValue($self, properties, startProps, callback);
-			var empty = $.isEmptyObject(properties),
+			var empty = $.isEmptyObject(endProps),
 				hidden = $self.is(":hidden"); // 如果元素为隐藏状态，则无法触发 transitionend 事件，并且 transition 会停止
 
 			// Get the total time
 			duration = parseInt(duration, 10);
 			// If there"s nothing to do...
 			if (duration === 0 || empty || hidden) {
-				if (!empty) $self.css(properties);
+				if (!empty) $self.css(endProps);
 				finishCall(self, callback, next);
 				return;
 			}
@@ -932,9 +945,9 @@
 					finishCall(self, callback, next);
 				} else {
 					var curProp = {};
-					for (var p in properties) {
+					for (var p in endProps) {
 						var startValue = startProps[p],
-							endValue = properties[p],
+							endValue = endProps[p],
 							dv;
 
 						setCubicBezier(specialEasing[p]);
@@ -979,18 +992,22 @@
 				bound = window.setTimeout(cb, duration);
 			}
 
+			// Build the `transition` property.
+			var transitionValue = getTransition(endProps, duration, easing, specialEasing);
+
 			// Apply transitions.
 			var transitionValueList = $.data(self, "transitionValueList");
 			transitionValueList.push(transitionValue);
 
 			self.style[support.transition] = transitionValueList.join(",");
-			$self.css(properties);
+			$self.css(endProps);
 		};
 
 		// 模拟 .finish() 所需要的方法
 		run.finish = function() {
-			$(this).css(properties);
-			finishCall(this, callback);
+			var $self = $(this);
+			$self.css($self.data("transitionEndProps"));
+			finishCall(this, $self.data("transitionCallback"));
 		};
 
 		// Use jQuery"s fx queue.
@@ -1329,7 +1346,7 @@
 		b = parseInt(b, 10);
 		color += "(" + r + "," + g + "," + b ;
 		if (len > 3) { color += "," + a; }
-		color += ")";console.log(begin, end, color)
+		color += ")";
 		return color;
 	}
 
