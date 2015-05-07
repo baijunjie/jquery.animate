@@ -215,7 +215,8 @@ $.cssEase = {
 # Changelog
 
 ## v1.3
-* 修正了一个严重的bug
+* 修正了一个严重的 bug
+* 弃用 transitionend 事件
 
 ## v1.2
 * 添加了对颜色动画的支持

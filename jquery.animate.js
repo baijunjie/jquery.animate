@@ -43,14 +43,6 @@
 		return testElem.style[support.transform] !== "";
 	}
 
-	var eventNames = {
-		"transition"       : "transitionend",
-		"MozTransition"    : "transitionend",
-		"WebkitTransition" : "webkitTransitionEnd",
-		"OTransition"      : "oTransitionEnd",
-		"msTransition"     : "MSTransitionEnd"
-	};
-
 	// 检查浏览器的 transition 支持
 	var support = {};
 	support.transform          = getSupportPropertyName("transform");
@@ -63,7 +55,6 @@
 	support.filter             = getSupportPropertyName("filter");
 	support.transition         = getSupportPropertyName("transition");
 	support.transform3d        = checkTransform3dSupport();
-	support.transitionEnd      = eventNames[support.transition];
 
 	// 将检测到的支持结果写入 $.support
 	for (var key in support) {
@@ -869,6 +860,9 @@
 
 	// ## transition()
 	function transition(properties, duration, easing, callback, queue, specialEasing) {
+
+		duration = parseInt(toMS(duration), 10);
+
 		this.each(function() {
 			var $self = $(this),
 				startProps = {},
@@ -878,12 +872,12 @@
 			if (!$.isArray($self.data("transitionValueList"))) $self.data("transitionValueList", []);
 
 			// 处理特殊值，并获取起始样式
-			var callback = disposeSpecialValue($self, endProps, startProps, callback);
+			var cb = disposeSpecialValue($self, endProps, startProps, callback);
 
 			$self.data({
 				"transitionStartProps": startProps,
 				"transitionEndProps": endProps,
-				"transitionCallback": callback
+				"transitionCallback": cb
 			});
 		});
 
@@ -892,16 +886,12 @@
 				$self = $(self),
 				startTime = $.now(),
 				startProps = $self.data("transitionStartProps"),
-				endProps = $self.data("transitionEndProps");
-				callback = $self.data("transitionCallback");
+				endProps = $self.data("transitionEndProps"),
+				callback = $self.data("transitionCallback"),
+				empty = $.isEmptyObject(endProps);
 
-			var empty = $.isEmptyObject(endProps),
-				hidden = $self.is(":hidden"); // 如果元素为隐藏状态，则无法触发 transitionend 事件，并且 transition 会停止
-
-			// Get the total time
-			duration = parseInt(duration, 10);
 			// If there"s nothing to do...
-			if (duration === 0 || empty || hidden) {
+			if (duration === 0 || empty) {
 				if (!empty) $self.css(endProps);
 				finishCall(self, callback, next);
 				return;
@@ -917,10 +907,6 @@
 				var i = $.inArray(timer, $.timers);
 				if (i >= 0) $.timers.splice(i, 1);
 
-				if (bound === true) {
-					$self.unbind(support.transitionEnd, cb);
-				}
-
 				i = $.inArray(transitionValue, transitionValueList);
 				if (i >= 0) transitionValueList.splice(i, 1);
 				self.style[support.transition] = transitionValueList.join(",");
@@ -929,13 +915,7 @@
 			};
 
 			var stop = function(gotoEnd) {
-				if (bound) {
-					if (bound === true) {
-						$self.unbind(support.transitionEnd, cb);
-					} else {
-						window.clearTimeout(bound);
-					}
-				}
+				window.clearTimeout(timerID);
 
 				var i = $.inArray(transitionValue, transitionValueList);
 				if (i >= 0) transitionValueList.splice(i, 1);
@@ -953,7 +933,7 @@
 						setCubicBezier(specialEasing[p]);
 						var bezierY = cubicBezier.getY(($.now() - startTime) / duration);
 
-						if (!endValue.indexOf("rgb")) {
+						if (typeof endValue === "string" && !endValue.indexOf("rgb")) {
 							startValue = parseColor(startValue);
 							endValue = parseColor(endValue);
 							dv = calculateColor(startValue, endValue, bezierY);
@@ -961,7 +941,8 @@
 							var u = getUnit(endValue);
 							startValue = parseFloat(startValue);
 							endValue = parseFloat(endValue);
-							dv = (parseFloat(endValue) - startValue) * bezierY + startValue + u;
+							dv = (parseFloat(endValue) - startValue) * bezierY + startValue;
+							if (u) dv += u;
 						}
 
 						curProp[p] = dv;
@@ -983,15 +964,6 @@
 			timer.anim = { stop: stop };
 			$.timers.push(timer);
 
-			var bound = false;
-			if (support.transitionEnd) {
-				bound = true;
-				$self.bind(support.transitionEnd, cb);
-			} else {
-				// Fallback to timers if the "transitionend" event isn"t supported.
-				bound = window.setTimeout(cb, duration);
-			}
-
 			// Build the `transition` property.
 			var transitionValue = getTransition(endProps, duration, easing, specialEasing);
 
@@ -1001,6 +973,12 @@
 
 			self.style[support.transition] = transitionValueList.join(",");
 			$self.css(endProps);
+
+			// transitionend 事件还是存在多个 bug
+			// 例如，多个 transition-property 并行时，先结束的动画会将触发其它属性动画的 transitionend 事件
+			// 再例如，元素动画途中 display: none 后，将不会再触发 transitionend 事件
+			// 因此只好弃用它，使用 setTimeout 代替它
+			var timerID = window.setTimeout(cb, duration);
 		};
 
 		// 模拟 .finish() 所需要的方法
