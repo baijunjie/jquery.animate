@@ -129,7 +129,7 @@ $("div").animate({ "rotate3d": "30,20,90" });
 ```
 
 
-支持符合属性的动画。<br>
+支持复合属性的动画。<br>
 To support the animation of the composite properties.<br>
 
 ```js
