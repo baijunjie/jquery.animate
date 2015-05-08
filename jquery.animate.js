@@ -1,5 +1,5 @@
 /*!
- * jQuery Animate v1.3 - By CSS3 transition
+ * jQuery Animate v1.4 - By CSS3 transition
  * @author baijunjie
  *
  * https://github.com/baijunjie/jquery.animate
@@ -134,21 +134,9 @@
 		}
 	};
 
-	// ## "filter" CSS hook
-	//
-	//    $("div").css({ filter: "blur(10px)" });
-	//
-	$.cssHooks.filter = {
-		get: function(elem) {
-			return elem.style[support.filter];
-		},
-		set: function(elem, value) {
-			elem.style[support.filter] = value;
-		}
-	};
-
 	// jQuery 1.8- 不支持这些属性的前缀转换
 	if (compareVersion("1.8", $.fn.jquery) > 0) {
+
 		// ## "transformOrigin" CSS hook
 		//
 		//    $("div").css({ transformOrigin: "0 0" });
@@ -203,7 +191,7 @@
 
 		// ## "backfaceVisibility" CSS hook
 		//
-		//    $("div").css({ backfaceVisibility: "100px 100px" });
+		//    $("div").css({ backfaceVisibility: "hidden" });
 		//
 		$.cssHooks.backfaceVisibility = {
 			get: function(elem) {
@@ -224,6 +212,19 @@
 			},
 			set: function(elem, value) {
 				elem.style[support.transition] = value;
+			}
+		};
+
+		// ## "filter" CSS hook
+		//
+		//    $("div").css({ filter: "blur(10px)" });
+		//
+		$.cssHooks.filter = {
+			get: function(elem) {
+				return elem.style[support.filter];
+			},
+			set: function(elem, value) {
+				elem.style[support.filter] = value;
 			}
 		};
 	}
@@ -276,6 +277,7 @@
 	registerCssHook("skew");
 	registerCssHook("skewX");
 	registerCssHook("skewY");
+	registerCssHook("pers");
 
 	function registerCssHook(prop, isPixels) {
 		// 所有属性都不应该被强制添加px单位，即使是 translate，因为它也可能是百分比
@@ -455,20 +457,20 @@
 			//    .css({ rotate: "30" })
 			//    .css({ rotate: "30deg" })
 			//
-			rotate: function(theta) {
-				this.setProp("rotate", theta, "deg");
+			rotate: function(angle) {
+				this.setProp("rotate", angle, "deg");
 			},
 
-			rotateX: function(theta) {
-				this.setProp("rotateX", theta, "deg");
+			rotateX: function(angle) {
+				this.setProp("rotateX", angle, "deg");
 			},
 
-			rotateY: function(theta) {
-				this.setProp("rotateY", theta, "deg");
+			rotateY: function(angle) {
+				this.setProp("rotateY", angle, "deg");
 			},
 
-			rotateZ: function(theta) {
-				this.set("rotate", theta);
+			rotateZ: function(angle) {
+				this.set("rotate", angle);
 			},
 
 			rotate3d: function(x, y, z) {
@@ -494,6 +496,11 @@
 
 			skewY: function(y) {
 				this.setProp("skewY", y, "deg");
+			},
+
+			// {pers: 100}  =>  transform: perspective(100px);
+			pers: function(pers) {
+				this.setProp("perspective", pers, "px");
 			}
 		},
 
@@ -590,6 +597,11 @@
 
 			skewY: function() {
 				return this.skewY || 0;
+			},
+
+			// .css("pers", 100).css("pers")  =>  100px
+			pers: function() {
+				return this.perspective || 0;
 			}
 		},
 
@@ -805,7 +817,6 @@
 				}
 			}
 
-
 			// 处理颜色值
 			if (typeof value === "string" && isNaN(parseFloat(value))) {
 				var color = isColor(value);
@@ -815,10 +826,6 @@
 			if (typeof curValue === "string" && isNaN(parseFloat(curValue))) {
 				var curColor = isColor(curValue);
 				curValue = curColor ? curColor : 0; // 主要针对定位属性，如：left默认为auto
-			}
-
-			if (!curColor) {
-				curValue = convertUnit($self, curValue, getUnit(value));
 			}
 
 			if ((typeof value === "undefined")
@@ -938,11 +945,7 @@
 							endValue = parseColor(endValue);
 							dv = calculateColor(startValue, endValue, bezierY);
 						} else {
-							var u = getUnit(endValue);
-							startValue = parseFloat(startValue);
-							endValue = parseFloat(endValue);
-							dv = (parseFloat(endValue) - startValue) * bezierY + startValue;
-							if (u) dv += u;
+							dv = calculateValue($self, p, startValue, endValue, bezierY);
 						}
 
 						curProp[p] = dv;
@@ -1223,44 +1226,159 @@
 		return value.substr(s[0].length);
 	}
 
-	// ### convertUnit()
-	// 将值转换为指定单位的新值
-	//
-	//    convertUnit($self, 100px, %)  =>  (100 / $self.outerWidth()) * 100 + "%"
-	//
-	function convertUnit($self, value, u) {
-		var oldUnit = getUnit(value),
-			oldValue = parseFloat(value),
-			newValue = value;
 
+	// ### getBaseValue($self, prop, pos)
+	// 根据属性获取百分比时基于的值
+	// @param pos 参数表示需要获取的方向属性在该属性值组中的索引位置，例如 ("margin", 0) == "margin-top"
+	//
+	//    getBaseValue($self, "width")                   =>  $self.parent().width()
+	//    getBaseValue($self, "x")                       =>  $self.outerWidth()
+	//
+	//    getBaseValue($self, "margin", 2)               =>  $self.parent().height()
+	//    getBaseValue($self, "background-position", 0)  =>  $self.outerWidth()
+	//
+	function getBaseValue($self, prop, pos) {
+		var baseSelfKeyword = [
+				"x",
+				"y",
+				"postion",
+				"origin",
+				"radius"
+			],
+			horDirKeyword = [
+				"x",
+				"width",
+				"padding",
+				"margin",
+				"left",
+				"right"
+			],
+			baseSelf = false,
+			dir = 0, // 表示方向，1表示水平，-1表示垂直
+			baseValue = 0,
+			p = prop.toLowerCase(),
+			i = 0,
+			l = baseSelfKeyword.length;
+
+		for (; i < l; i++) {
+			var k = baseSelfKeyword[i];
+			if (p.indexOf(k) >= 0) {
+				baseSelf = true;
+			}
+		}
+
+		i = 0;
+		l = horDirKeyword.length;
+		for (; i < l; i++) {
+			if (p.indexOf(horDirKeyword[i]) >= 0) {
+				dir = 1;
+			}
+		}
+
+		if (!dir) {
+			if (p.indexOf("postion") >= 0
+			|| p.indexOf("size") >= 0
+			|| p.indexOf("origin") >= 0) {
+				if (pos === 1) {
+					dir = -1;
+				} else {
+					dir = 1;
+				}
+			} else {
+				if (pos === 1 || pos === 3) {
+					dir = 1;
+				} else {
+					dir = -1;
+				}
+			}
+		}
+
+		if (dir === 1) {
+			baseValue = baseSelf ? $self.outerWidth() : $self.parent().width();
+		} else if (dir === -1) {
+			baseValue = baseSelf ? $self.outerHeight() : $self.parent().height();
+		}
+
+		return baseValue;
+	}
+
+	// ### convertUnit()
+	// 将属性值转换为指定单位的新值
+	// @param pos 参数表示需要获取的方向属性在该属性值组中的索引位置，例如 ("margin", 0) == "margin-top"
+	//
+	//    convertUnit($self, "margin", 1, 100px, %)  =>  (100 / $self.parent().width()) * 100 + "%"
+	//
+	function convertUnit($self, prop, pos, value, u) {
 		var px = "px",
 			em = "em",
-			pe = "%";
+			pe = "%",
+			oldUnit = getUnit(value) || px,
+			newUnit = u || px,
+			newValue = value;
 
-		if (oldUnit && u && oldUnit != u) {
-			if (u === px) {
+		if (oldUnit != newUnit) {
+			var oldValue = parseFloat(value);
+			if (newUnit === px) {
 				if (oldUnit === pe) {
-					newValue = oldValue * $self.outerWidth() + px;
+					newValue = oldValue * getBaseValue($self, prop, pos) + px;
 				} else if (oldUnit === em) {
 					newValue = oldValue * parseFloat($self.css("font-size")) + px;
 				}
-			} else if (u === pe) {
-				if (oldUnit === px) {
-					newValue = (oldValue / $self.outerWidth()) * 100 + pe;
+			} else if (newUnit === pe) {
+				var baseValue = getBaseValue($self, prop, pos);
+				if (!baseValue) {
+					newValue = 0;
+				} else if (oldUnit === px) {
+					newValue = (oldValue / baseValue) * 100 + pe;
 				} else if (oldUnit === em) {
-					newValue = (oldValue * parseFloat($self.css("font-size")) / $self.outerWidth()) * 100 + pe;
+					newValue = (oldValue * parseFloat($self.css("font-size")) / baseValue) * 100 + pe;
 				}
-			} else if (u === em) {
+			} else if (newUnit === em) {
 				if (oldUnit === px) {
 					newValue = oldValue / parseFloat($self.css("font-size")) + em;
 				} else if (oldUnit === pe) {
-					newValue = oldValue * $self.outerWidth() / parseFloat($self.css("font-size")) + em;
+					newValue = oldValue * getBaseValue($self, prop, pos) / parseFloat($self.css("font-size")) + em;
 				}
 			}
 		}
 
 		return newValue;
 	}
+
+
+	// ### calculateValue($self, begin, end, pos)
+	// 根据 0-1 之间的位置比，计算两个属性值在该位置上的中间值
+	//
+	//    calculateValue($self, "width", 0, 10, .5);            =>  5
+	//    calculateValue($self, "width", "100px", "100%", .5);  =>  ($self.parent().width() - 100) * .5
+	//
+	function calculateValue($self, prop, begin, end, pos) {
+		begin = (begin + "").split(" ");
+		end = (end + "").split(" ");
+
+		var value = [],
+			i = 0,
+			l = end.length;
+
+		for (; i < l; i++) {
+			var startValue = begin[i] || 0,
+				endValue = end[i],
+				u = getUnit(endValue) || "px";
+
+			startValue = convertUnit($self, prop, i, startValue, u);
+			startValue = parseFloat(startValue);
+			endValue = parseFloat(endValue);
+			value[i] = (endValue - startValue) * pos + startValue + u;
+		}
+
+		l = begin.length;
+		for (; i < l; i++) {
+			value.push(begin[i]);
+		}
+
+		return value.join(" ");
+	}
+
 
 	// ### toMS(duration)
 	// Converts given `duration` to a millisecond string.
@@ -1280,6 +1398,7 @@
 
 		return unit(i, "ms");
 	}
+
 
 	// ### isColor(value)
 	// 判断一个值是否为颜色，如果是颜色则返回该颜色的 rgb 形式

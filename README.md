@@ -52,6 +52,16 @@ $("div").css({ skew: [30,60] });                    //=> skewX(30deg) skewY(60de
 ```
 
 
+设置透视点。<br>
+Set perspective.<br>
+
+```js
+// Note the difference between
+$("div").css({ "perspective": 100 });  //=>  perspective: 100px;
+$("div").css({ "pers": 100 });         //=>  transform: perspective(100px);
+```
+
+
 读取属性值。<br>
 Read the attribute value.<br>
 ``` js
@@ -114,22 +124,31 @@ $("div").animate({
 <b>Transform</b> properties also supports special writing.<br>
 
 ```js
-$("div").animate({"scale": [1, 2]});
-$("div").animate({"rotate3d": "30,20,90"});
+$("div").animate({ "scale": [1, 2] });
+$("div").animate({ "rotate3d": "30,20,90" });
+```
+
+
+支持符合属性的动画。<br>
+To support the animation of the composite properties.<br>
+
+```js
+$("div").animate({ "border-radius": "10px 20px 30px 40px" });
+$("div").animate({ "transform-origin": "100px 300px" });
 ```
 
 
 可以完美支持 <b>.stop()</b> 以及 <b>.finish()</b> 方法。<br>
 Can perfect support <b>.stop()</b> and <b>.finish()</b> method.<br>
 ```js
-$("div").animate({x: 200}, 2000, "linear");
+$("div").animate({ x: 200 }, 2000, "linear");
 window.setTimeout(function() {
 	$("div").stop();
 	console.log($("div").css("x"));  //=> 100px
 }, 1000);
 ```
 ```js
-$("div").animate({x: 200}, 2000, "linear");
+$("div").animate({ x: 200 }, 2000, "linear");
 $("div").finish();
 console.log($("div").css("x"));  //=> 200px
 ```
@@ -138,7 +157,7 @@ console.log($("div").css("x"));  //=> 200px
 Can support color animation now, and you can use the <b>.stop()</b> method to stop to a color value.<br>
 
 ```js
-$("div").animate({ backgroundColor: "black" }, 5000);
+$("div").animate({ "background-color": "black" }, 5000);
 ```
 
 
@@ -213,6 +232,10 @@ $.cssEase = {
 
 
 # Changelog
+
+## v1.4
+* 现在支持复合属性的动画了
+* 区分开透视点的两种设置方法
 
 ## v1.3
 * 修正了一个严重的 bug
