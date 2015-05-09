@@ -723,29 +723,6 @@
 	};
 
 
-	// 调用队列
-	function callOrQueue(self, queue, callback) {
-		if (queue === true) {
-			self.queue(callback);
-		} else if (queue) {
-			self.queue(queue, callback);
-		} else {
-			self.each(function() {
-				callback.call(this);
-			});
-		}
-	}
-
-	function finishCall(self, callback, next) {
-		if (typeof callback === "function") {
-			callback.call(self);
-		}
-		if (typeof next === "function") {
-			next();
-		}
-	}
-
-
 	// ### getTransition()
 	// Returns the transition string to be used for the `transition` CSS property.
 	//
@@ -865,6 +842,136 @@
 		return fn;
 	}
 
+
+	// 调用队列
+	function callOrQueue(self, queue, callback) {
+		if (queue === true) {
+			self.queue(callback);
+		} else if (queue) {
+			self.queue(queue, callback);
+		} else {
+			self.each(function() {
+				callback.call(this);
+			});
+		}
+	}
+
+	function finishCall(self, callback, next) {
+		if (typeof callback === "function") {
+			callback.call(self);
+		}
+		if (typeof next === "function") {
+			next();
+		}
+	}
+
+	function delayRun(next) {
+		var self = this,
+			$self = $(self),
+			params = $self.data("transitionDelayRunParams") || {},
+			transitionValueList = params.transitionValueList,
+			startProps = params.startProps,
+			endProps = params.endProps,
+			duration = params.duration,
+			easing = params.easing,
+			queue = params.queue,
+			specialEasing = params.specialEasing,
+			callback = params.callback,
+			empty = $.isEmptyObject(endProps);
+
+		// If there"s nothing to do...
+		if (duration === 0 || empty) {
+			if (!empty) $self.css(endProps);
+			finishCall(self, callback, next);
+			return;
+		}
+
+		$self.css(startProps);
+		self.offsetWidth; // 强制刷新
+
+		// Prepare the callback.
+		var cb = function(e) {
+			if (e && e.currentTarget !== e.target) return;
+
+			var i = $.inArray(timer, $.timers);
+			if (i >= 0) $.timers.splice(i, 1);
+
+			i = $.inArray(transitionValue, transitionValueList);
+			if (i >= 0) transitionValueList.splice(i, 1);
+			self.style[support.transition] = transitionValueList.join(",");
+
+			finishCall(self, callback, next);
+		};
+
+		var stop = function(gotoEnd) {
+			window.clearTimeout(timerID);
+
+			var i = $.inArray(transitionValue, transitionValueList);
+			if (i >= 0) transitionValueList.splice(i, 1);
+			self.style[support.transition] = transitionValueList.join(",");
+
+			if (gotoEnd) {
+				finishCall(self, callback, next);
+			} else {
+				var curProp = {};
+				for (var p in endProps) {
+					var startValue = startProps[p],
+						endValue = endProps[p],
+						dv;
+
+					setCubicBezier(specialEasing[p]);
+					var bezierY = cubicBezier.getY(($.now() - startTime) / duration);
+
+					if (typeof endValue === "string" && !endValue.indexOf("rgb")) {
+						startValue = parseColor(startValue);
+						endValue = parseColor(endValue);
+						dv = calculateColor(startValue, endValue, bezierY);
+					} else {
+						dv = calculateValue($self, p, startValue, endValue, bezierY);
+					}
+
+					curProp[p] = dv;
+				}
+				$self.css(curProp);
+			}
+		};
+
+		// 模拟 .stop() 所需要的对象
+		var timer = function() {
+			// 当在 animate() 之后 调用 transit() 时
+			// 在 animate 动画完成后，且下一个队列函数已经执行，timer 被加入到 $.timers 队列中后，此时 jQuery 又会执行一次 jQuery.fx.tick
+			// 在 jQuery.fx.tick 中 $.timers 会将返回值为 false 的 timer 全部清空，这样会导致当前的动画无法执行 stop()
+			// 注释：animate 的动画中 timer() 的返回值为当前动画的剩余时间
+			return true;
+		};
+		timer.elem = self;
+		timer.queue = queue;
+		timer.anim = { stop: stop };
+		$.timers.push(timer);
+
+		// Build the `transition` property.
+		var transitionValue = getTransition(endProps, duration, easing, specialEasing);
+		transitionValueList.push(transitionValue);
+
+		var startTime = $.now();
+		self.style[support.transition] = transitionValueList.join(",");
+		$self.css(endProps);
+
+		// transitionend 事件还是存在多个 bug
+		// 例如，多个 transition-property 并行时，先结束的动画会将触发其它属性动画的 transitionend 事件
+		// 再例如，元素动画途中 display: none 后，将不会再触发 transitionend 事件
+		// 因此只好弃用它，使用 setTimeout 代替它
+		var timerID = window.setTimeout(cb, duration);
+	}
+
+	// 模拟 .finish() 所需要的方法
+	delayRun.finish = function() {
+		var $self = $(this),
+			params = $self.data("transitionDelayRunParams") || {};
+		$self.css(params.endProps);
+		finishCall(this, params.callback);
+	};
+
 	// ## transition()
 	function transition(properties, duration, easing, callback, queue, specialEasing) {
 
@@ -872,127 +979,26 @@
 
 		this.each(function() {
 			var $self = $(this),
-				startProps = {},
-				endProps = $.extend(true, {}, properties);
+				params = $self.data("transitionDelayRunParams") || {};
+
+			params.startProps = {};
+			params.endProps = $.extend(true, {}, properties);
+			params.duration = duration;
+			params.easing = easing;
+			params.queue = queue;
+			params.specialEasing = specialEasing;
+
+			// 处理 endProps 中的特殊值，并获取起始样式，返回新的回调
+			params.callback = disposeSpecialValue($self, params.endProps, params.startProps, callback);
 
 			// 用于分别保存每一个对象的 transition 属性值列表
-			if (!$.isArray($self.data("transitionValueList"))) $self.data("transitionValueList", []);
+			if (!$.isArray(params.transitionValueList)) params.transitionValueList = [];
 
-			// 处理特殊值，并获取起始样式
-			var cb = disposeSpecialValue($self, endProps, startProps, callback);
-
-			$self.data({
-				"transitionStartProps": startProps,
-				"transitionEndProps": endProps,
-				"transitionCallback": cb
-			});
+			$self.data("transitionDelayRunParams", params);
 		});
 
-		var run = function(next) {
-			var self = this,
-				$self = $(self),
-				startTime = $.now(),
-				startProps = $self.data("transitionStartProps"),
-				endProps = $self.data("transitionEndProps"),
-				callback = $self.data("transitionCallback"),
-				empty = $.isEmptyObject(endProps);
-
-			// If there"s nothing to do...
-			if (duration === 0 || empty) {
-				if (!empty) $self.css(endProps);
-				finishCall(self, callback, next);
-				return;
-			}
-
-			$self.css(startProps);
-			self.offsetWidth; // 强制刷新
-
-			// Prepare the callback.
-			var cb = function(e) {
-				if (e && e.currentTarget !== e.target) return;
-
-				var i = $.inArray(timer, $.timers);
-				if (i >= 0) $.timers.splice(i, 1);
-
-				i = $.inArray(transitionValue, transitionValueList);
-				if (i >= 0) transitionValueList.splice(i, 1);
-				self.style[support.transition] = transitionValueList.join(",");
-
-				finishCall(self, callback, next);
-			};
-
-			var stop = function(gotoEnd) {
-				window.clearTimeout(timerID);
-
-				var i = $.inArray(transitionValue, transitionValueList);
-				if (i >= 0) transitionValueList.splice(i, 1);
-				self.style[support.transition] = transitionValueList.join(",");
-
-				if (gotoEnd) {
-					finishCall(self, callback, next);
-				} else {
-					var curProp = {};
-					for (var p in endProps) {
-						var startValue = startProps[p],
-							endValue = endProps[p],
-							dv;
-
-						setCubicBezier(specialEasing[p]);
-						var bezierY = cubicBezier.getY(($.now() - startTime) / duration);
-
-						if (typeof endValue === "string" && !endValue.indexOf("rgb")) {
-							startValue = parseColor(startValue);
-							endValue = parseColor(endValue);
-							dv = calculateColor(startValue, endValue, bezierY);
-						} else {
-							dv = calculateValue($self, p, startValue, endValue, bezierY);
-						}
-
-						curProp[p] = dv;
-					}
-					$self.css(curProp);
-				}
-			};
-
-			// 模拟 .stop() 所需要的对象
-			var timer = function() {
-				// 当在 animate() 之后 调用 transit() 时
-				// 在 animate 动画完成后，且下一个队列函数已经执行，timer 被加入到 $.timers 队列中后，此时 jQuery 又会执行一次 jQuery.fx.tick
-				// 在 jQuery.fx.tick 中 $.timers 会将返回值为 false 的 timer 全部清空，这样会导致当前的动画无法执行 stop()
-				// 注释：animate 的动画中 timer() 的返回值为当前动画的剩余时间
-				return true;
-			};
-			timer.elem = self;
-			timer.queue = queue;
-			timer.anim = { stop: stop };
-			$.timers.push(timer);
-
-			// Build the `transition` property.
-			var transitionValue = getTransition(endProps, duration, easing, specialEasing);
-
-			// Apply transitions.
-			var transitionValueList = $.data(self, "transitionValueList");
-			transitionValueList.push(transitionValue);
-
-			self.style[support.transition] = transitionValueList.join(",");
-			$self.css(endProps);
-
-			// transitionend 事件还是存在多个 bug
-			// 例如，多个 transition-property 并行时，先结束的动画会将触发其它属性动画的 transitionend 事件
-			// 再例如，元素动画途中 display: none 后，将不会再触发 transitionend 事件
-			// 因此只好弃用它，使用 setTimeout 代替它
-			var timerID = window.setTimeout(cb, duration);
-		};
-
-		// 模拟 .finish() 所需要的方法
-		run.finish = function() {
-			var $self = $(this);
-			$self.css($self.data("transitionEndProps"));
-			finishCall(this, $self.data("transitionCallback"));
-		};
-
 		// Use jQuery"s fx queue.
-		callOrQueue(this, queue, run);
+		callOrQueue(this, queue, delayRun);
 
 		return this;
 	}
