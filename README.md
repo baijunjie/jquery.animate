@@ -168,10 +168,12 @@ Note that because of <b>CSS3 Transition</b> animation support only three times b
 If use it does not support <b>Easing</b>, We will use the original <b>jQuery.animate</b> methods to achieve this animation.<br>
 
 同时，所有的 <b>Transform</b> 属性不能分别设置 <b>Easing</b>，因为他们的 <b>Transition</b> 都是通过 <b>Transform</b> 属性来设置的。<br>
-因此，如果发生这种情况，那么只有第一个 <b>Easing</b> 将作为 <b>transition-timing-function</b>。<br>
+<del>因此，如果发生这种情况，那么只有第一个 <b>Easing</b> 将作为 <b>transition-timing-function</b>。</del><br>
+因为原则上应该优先兼容动画效果，因此这种情况下，将会使用原来的 <b>jQuery.animate</b> 方法来实现该动画。<br>
 
 Meanwhile, all the <b>Transform</b> property can not be separately set <b>Easing</b>, because their <b>Transition</b> through <b>Transform</b> property to set the.<br>
-So, if this happens, only the first <b>Easing</b> will serve as <b>transition-timing-function</b>.<br>
+<del>So, if this happens, only the first <b>Easing</b> will serve as <b>transition-timing-function</b>.</del><br>
+Because in principle should be the priority compatible animation effects, so in this case, will use the original <b>jQuery.animate</b> ways to implement this animation.<br>
 
 ```js
 $("div").animate({
@@ -232,6 +234,10 @@ $.cssEase = {
 
 
 # Changelog
+
+## v1.4.1
+* 优化代码结构
+* 当为 transform 中的属性分别设置了不同的 easing 时，现在改为使用原来的 <b>jQuery.animate</b> 方法来实现该动画
 
 ## v1.4
 * 现在支持复合属性的动画了

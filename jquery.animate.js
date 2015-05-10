@@ -1,5 +1,5 @@
 /*!
- * jQuery Animate v1.4 - By CSS3 transition
+ * jQuery Animate v1.4.1 - By CSS3 transition
  * @author baijunjie
  *
  * https://github.com/baijunjie/jquery.animate
@@ -1092,25 +1092,34 @@
 		// 拆分属性
 		resolveProp(properties);
 
-		var nonsupport = false;
-		if ("scrollLeft" in properties || "scrollTop" in properties) {
-			nonsupport = true;
+		var useTransition = support.transition;
+		if (useTransition && ("scrollLeft" in properties || "scrollTop" in properties)) {
+			useTransition = false;
 		}
-		if (!nonsupport) {
+		if (useTransition) {
 			// 将属性名与对应的缓动过滤出来
 			propFilter(properties, specialEasing);
+			var transformEasing;
 			for (var p in specialEasing) {
 				// 将缓动转换为贝塞尔函数
-				specialEasing[p] = convertEase(specialEasing[p] || easing);
-				if (typeof specialEasing[p] === "undefined") {
-					nonsupport = true;
+				var e = specialEasing[p] = convertEase(specialEasing[p] || easing);
+				if (typeof e === "undefined") {
+					useTransition = false;
 					break;
+				} else if (propertyMap[p] === support.transform) {
+					// 判断transform是否设置了不同的easing
+					if (transformEasing && transformEasing !== e) {
+						useTransition = false;
+						break;
+					} else {
+						transformEasing = e;
+					}
 				}
 			}
 		}
 
 		// 如果不支持 transition 动画，或者不支持该缓动类型，再或者动画属性中包含不支持的属性，则使用 animate 实现
-		if (!support.transition || nonsupport) {
+		if (!useTransition) {
 			return _animate.call(this, originalProperties, originalDuration, originalEasing, originalCallback);
 		}
 
