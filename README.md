@@ -235,6 +235,9 @@ $.cssEase = {
 
 # Changelog
 
+## v1.4.2
+* 为 amd 模块定义了一个"jquery.animate"的ID，便于与 jQuery 合并使用
+
 ## v1.4.1
 * 优化代码结构
 * 当为 transform 中的属性分别设置了不同的 easing 时，现在改为使用原来的 <b>jQuery.animate</b> 方法来实现该动画
