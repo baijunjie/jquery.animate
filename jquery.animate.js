@@ -763,9 +763,9 @@
 
 	// ### disposeSpecialValue()
 	//
-	//    .animate({left: "100"})     => .css({left: 0}).animate({left: 100});
-	//    .animate({opacity: "show"}) => .css({opacity: 0}).show().animate({opacity: 1});
-	//    .animate({opacity: "hide"}) => .css({opacity: 1}).animate({opacity: 0}, function() { $(this).hide() });
+	//    .css({left: auto}).animate({left: "100"})   =>  .css({left: 0}).animate({left: 100});
+	//    .animate({opacity: "show"})                 =>  .css({opacity: 0}).show().animate({opacity: 1});
+	//    .animate({opacity: "hide"})                 =>  .css({opacity: 1}).animate({opacity: 0}, function() { $(this).hide() });
 	//
 	function disposeSpecialValue($self, props, startProps, callback) {
 		var endStyles = {},
@@ -1244,7 +1244,7 @@
 
 	// ### getBaseValue($self, prop, pos)
 	// 根据属性获取百分比时基于的值
-	// @param pos 参数表示需要获取的方向属性在该属性值组中的索引位置，例如 ("margin", 0) == "margin-top"
+	// @param pos 参数表示需要获取的子属性在该符合属性值组中的索引位置，例如 ("margin", 0) == "margin-top"
 	//
 	//    getBaseValue($self, "width")                   =>  $self.parent().width()
 	//    getBaseValue($self, "x")                       =>  $self.outerWidth()
@@ -1319,7 +1319,7 @@
 
 	// ### convertUnit()
 	// 将属性值转换为指定单位的新值
-	// @param pos 参数表示需要获取的方向属性在该属性值组中的索引位置，例如 ("margin", 0) == "margin-top"
+	// @param pos 参数表示需要获取的子属性在该符合属性值组中的索引位置，例如 ("margin", 0) == "margin-top"
 	//
 	//    convertUnit($self, "margin", 1, 100px, %)  =>  (100 / $self.parent().width()) * 100 + "%"
 	//
