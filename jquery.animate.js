@@ -1,5 +1,5 @@
 /*!
- * jQuery Animate v1.4.2 - By CSS3 transition
+ * jQuery Animate v1.4.1 - By CSS3 transition
  * @author baijunjie
  *
  * https://github.com/baijunjie/jquery.animate
@@ -9,7 +9,7 @@
 	"use strict";
 
 	if (typeof define === "function" && define.amd) {
-		define("jquery.animate", ["jquery"], factory);
+		define(["jquery"], factory);
 	} else if (typeof exports === "object") {
 		module.exports = factory(require("jquery"));
 	} else {
