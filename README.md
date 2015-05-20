@@ -235,6 +235,9 @@ $.cssEase = {
 
 # Changelog
 
+## v1.4.2
+* 现在可以正确的识别递增和递减值了，例如：$("div").animate({ left: "+=100%" });
+
 ## v1.4.1
 * 优化代码结构
 * 当为 transform 中的属性分别设置了不同的 easing 时，现在改为使用原来的 <b>jQuery.animate</b> 方法来实现该动画

@@ -1,5 +1,5 @@
 /*!
- * jQuery Animate v1.4.1 - By CSS3 transition
+ * jQuery Animate v1.4.2 - By CSS3 transition
  * @author baijunjie
  *
  * https://github.com/baijunjie/jquery.animate
@@ -795,14 +795,15 @@
 			}
 
 			// 处理颜色值
-			if (typeof value === "string" && isNaN(parseFloat(value))) {
-				var color = isColor(value);
-				value = color ? color : 0;
-			}
-
 			if (typeof curValue === "string" && isNaN(parseFloat(curValue))) {
 				var curColor = isColor(curValue);
 				curValue = curColor ? curColor : 0; // 主要针对定位属性，如：left默认为auto
+			}
+			if (typeof value === "string" && isNaN(parseFloat(value))) {
+				var color = isColor(value);
+				if (!color) { // 主要针对递增或递减值，例如：left: "+=30%"
+					value = calculateValue($self, p, curValue, value, 1);
+				}
 			}
 
 			if ((typeof value === "undefined")
@@ -1233,18 +1234,19 @@
 	//
 	//    getUnit("30px")      => "px"
 	//    getUnit("30%")       => "%"
+	//    getUnit("30")        => "px"
 	//
 	function getUnit(value) {
-		if (typeof value !== "string") return "";
+		if (typeof value !== "string") return "px";
 		var s = value.match(/^[\-0-9\.]+/);
-		if (!s) return "";
-		return value.substr(s[0].length);
+		if (!s) return "px";
+		return value.substr(s[0].length) || "px";
 	}
 
 
-	// ### getBaseValue($self, prop, pos)
+	// ### getBaseValue($self, prop, index)
 	// 根据属性获取百分比时基于的值
-	// @param pos 参数表示需要获取的子属性在该符合属性值组中的索引位置，例如 ("margin", 0) == "margin-top"
+	// @param index 参数表示需要获取的子属性在该符合属性值组中的索引位置，例如 ("margin", 0) == "margin-top"
 	//
 	//    getBaseValue($self, "width")                   =>  $self.parent().width()
 	//    getBaseValue($self, "x")                       =>  $self.outerWidth()
@@ -1252,11 +1254,11 @@
 	//    getBaseValue($self, "margin", 2)               =>  $self.parent().height()
 	//    getBaseValue($self, "background-position", 0)  =>  $self.outerWidth()
 	//
-	function getBaseValue($self, prop, pos) {
+	function getBaseValue($self, prop, index) {
 		var baseSelfKeyword = [
 				"x",
 				"y",
-				"postion",
+				"position",
 				"origin",
 				"radius"
 			],
@@ -1291,16 +1293,16 @@
 		}
 
 		if (!dir) {
-			if (p.indexOf("postion") >= 0
+			if (p.indexOf("position") >= 0
 			|| p.indexOf("size") >= 0
 			|| p.indexOf("origin") >= 0) {
-				if (pos === 1) {
+				if (index === 1) {
 					dir = -1;
 				} else {
 					dir = 1;
 				}
 			} else {
-				if (pos === 1 || pos === 3) {
+				if (index === 1 || index === 3) {
 					dir = 1;
 				} else {
 					dir = -1;
@@ -1319,15 +1321,15 @@
 
 	// ### convertUnit()
 	// 将属性值转换为指定单位的新值
-	// @param pos 参数表示需要获取的子属性在该符合属性值组中的索引位置，例如 ("margin", 0) == "margin-top"
+	// @param index 参数表示需要获取的子属性在该符合属性值组中的索引位置，例如 ("margin", 0) == "margin-top"
 	//
 	//    convertUnit($self, "margin", 1, 100px, %)  =>  (100 / $self.parent().width()) * 100 + "%"
 	//
-	function convertUnit($self, prop, pos, value, u) {
+	function convertUnit($self, prop, index, value, u) {
 		var px = "px",
 			em = "em",
 			pe = "%",
-			oldUnit = getUnit(value) || px,
+			oldUnit = getUnit(value),
 			newUnit = u || px,
 			newValue = value;
 
@@ -1335,12 +1337,12 @@
 			var oldValue = parseFloat(value);
 			if (newUnit === px) {
 				if (oldUnit === pe) {
-					newValue = oldValue * getBaseValue($self, prop, pos) + px;
+					newValue = oldValue / 100 * getBaseValue($self, prop, index) + px;
 				} else if (oldUnit === em) {
 					newValue = oldValue * parseFloat($self.css("font-size")) + px;
 				}
 			} else if (newUnit === pe) {
-				var baseValue = getBaseValue($self, prop, pos);
+				var baseValue = getBaseValue($self, prop, index);
 				if (!baseValue) {
 					newValue = 0;
 				} else if (oldUnit === px) {
@@ -1352,7 +1354,7 @@
 				if (oldUnit === px) {
 					newValue = oldValue / parseFloat($self.css("font-size")) + em;
 				} else if (oldUnit === pe) {
-					newValue = oldValue * getBaseValue($self, prop, pos) / parseFloat($self.css("font-size")) + em;
+					newValue = oldValue / 100 * getBaseValue($self, prop, index) / parseFloat($self.css("font-size")) + em;
 				}
 			}
 		}
@@ -1364,9 +1366,11 @@
 	// ### calculateValue($self, begin, end, pos)
 	// 根据 0-1 之间的位置比，计算两个属性值在该位置上的中间值
 	//
-	//    calculateValue($self, "width", 0, 10, .5);            =>  5
-	//    calculateValue($self, "width", "100px", "100%", .5);  =>  ($self.parent().width() - 100) * .5
+	//    calculateValue($self, "left", 0, 10, .5);              =>  5px
+	//    calculateValue($self, "left", "50px", "100%", .5);     =>  (100 - 50 / $self.parent().width() * 100) * .5 + 50 / $self.parent().width() * 100 + "%"
+	//    calculateValue($self, "left", "50px", "+=100%", .5);   =>  $self.parent().width() * 100% * .5 + 50 + "px"
 	//
+	var rfxnum = new RegExp("^(?:([+-])=|)([+-]?(?:\\d*\\.|)\\d+(?:[eE][+-]?\\d+|))([a-z%]*)$", "i");
 	function calculateValue($self, prop, begin, end, pos) {
 		begin = (begin + "").split(" ");
 		end = (end + "").split(" ");
@@ -1378,11 +1382,24 @@
 		for (; i < l; i++) {
 			var startValue = begin[i] || 0,
 				endValue = end[i],
-				u = getUnit(endValue) || "px";
+				u = getUnit(endValue);
 
-			startValue = convertUnit($self, prop, i, startValue, u);
-			startValue = parseFloat(startValue);
 			endValue = parseFloat(endValue);
+
+			if (isNaN(endValue)) { // 如果结束值为 "+=" 或者 "-="
+				var ret = rfxnum.exec(end[i]);
+				if (ret) {
+					var v = (ret[1] + 1) * ret[2] + ret[3];
+					u = getUnit(startValue); // 单位改用起始值的单位
+					v = convertUnit($self, prop, i, v, u);
+					startValue = parseFloat(startValue);
+					endValue = startValue + parseFloat(v);
+				}
+			} else {
+				startValue = convertUnit($self, prop, i, startValue, u);
+				startValue = parseFloat(startValue);
+			}
+
 			value[i] = (endValue - startValue) * pos + startValue + u;
 		}
 
