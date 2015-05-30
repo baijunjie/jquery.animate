@@ -1,5 +1,5 @@
 /*!
- * jQuery Animate v1.4.2 - By CSS3 transition
+ * jQuery Animate v1.5.1 - By CSS3 transition
  * @author baijunjie
  *
  * https://github.com/baijunjie/jquery.animate
@@ -794,15 +794,30 @@
 				}
 			}
 
-			// 处理颜色值
-			if (typeof curValue === "string" && isNaN(parseFloat(curValue))) {
+
+			if (isComplex(curValue)) { // 检查复合值是否为阴影
+				curValue = checkShadow(p, curValue);
+
+			} else if (isKeyword(curValue)) { // 处理关键字
 				var curColor = isColor(curValue);
-				curValue = curColor ? curColor : 0; // 主要针对定位属性，如：left默认为auto
+				if (!curColor) {
+					curValue = checkShadow(p, curValue, value.indexOf("inset") >= 0); // 如果是阴影属性，则返回一个复合属性
+					if (!isComplex(value)) {
+						curValue = 0; // 主要针对定位属性，如：left默认为auto
+					}
+				}
 			}
-			if (typeof value === "string" && isNaN(parseFloat(value))) {
+
+			if (isComplex(value)) {
+				value = checkShadow(p, value);
+
+			} else if (isKeyword(value)) {
 				var color = isColor(value);
-				if (!color) { // 主要针对递增或递减值，例如：left: "+=30%"
-					value = calculateValue($self, p, curValue, value, 1);
+				if (!color) {
+					value = checkShadow(p, value, curValue.indexOf("inset") >= 0); // 如果是阴影属性，则返回一个复合属性
+					if (!isComplex(value) && value.match(/^[+-]=/)) { // 主要针对递增或递减值，例如：left: "+=30%"
+						value = calculateValue($self, p, curValue, value, 1);
+					}
 				}
 			}
 
@@ -923,7 +938,7 @@
 					setCubicBezier(specialEasing[p]);
 					var bezierY = cubicBezier.getY(($.now() - startTime) / duration);
 
-					if (typeof endValue === "string" && !endValue.indexOf("rgb")) {
+					if (isColor(endValue)) { // 如果是颜色
 						startValue = parseColor(startValue);
 						endValue = parseColor(endValue);
 						dv = calculateColor(startValue, endValue, bezierY);
@@ -1384,23 +1399,32 @@
 				endValue = end[i],
 				u = getUnit(endValue);
 
-			endValue = parseFloat(endValue);
+			if (isColor(endValue)) {
+				startValue = parseColor(startValue);
+				endValue = parseColor(endValue);
 
-			if (isNaN(endValue)) { // 如果结束值为 "+=" 或者 "-="
+				value[i] = calculateColor(startValue, endValue, pos);
+
+			} else if (isNaN(parseFloat(endValue))) { // 可能是一些关键字或者特殊值
 				var ret = rfxnum.exec(end[i]);
-				if (ret) {
+				if (ret) { // 如果结束值为 "+=" 或者 "-="
 					var v = (ret[1] + 1) * ret[2] + ret[3];
 					u = getUnit(startValue); // 单位改用起始值的单位
 					v = convertUnit($self, prop, i, v, u);
 					startValue = parseFloat(startValue);
 					endValue = startValue + parseFloat(v);
+
+					value[i] = (endValue - startValue) * pos + startValue + u;
+				} else { // 如果是关键字，就保留原值
+					value[i] = endValue;
 				}
 			} else {
+				endValue = parseFloat(endValue);
 				startValue = convertUnit($self, prop, i, startValue, u);
 				startValue = parseFloat(startValue);
-			}
 
-			value[i] = (endValue - startValue) * pos + startValue + u;
+				value[i] = (endValue - startValue) * pos + startValue + u;
+			}
 		}
 
 		l = begin.length;
@@ -1431,20 +1455,72 @@
 		return unit(i, "ms");
 	}
 
+	// ### isKeyword(value)
+	// 判断一个值是否为关键字
+	//
+	//    isKeyword("auto");                =>  true
+	//    isKeyword("50px 50px 1px #000");  =>  false
+	//
+	function isKeyword(value) {
+		return typeof value === "string" && isNaN(parseFloat(value)) && value.split(" ").length === 1;
+	}
+
+	// ### isComplex(value)
+	// 判断一个值是否为复合值
+	//
+	//    isComplex("50px");                =>  false
+	//    isComplex("50px 50px 1px #000");  =>  true
+	//
+	function isComplex(value) {
+		return value.split(" ").length > 1;
+	}
 
 	// ### isColor(value)
 	// 判断一个值是否为颜色，如果是颜色则返回该颜色的 rgb 形式
 	//
-	//    isColor(white);  =>  "rgb(255,255,255)"
-	//    isColor(abcd);   =>  false
+	//    isColor("white");  =>  "rgb(255,255,255)"
+	//    isColor("auto");   =>  false
 	//
 	function isColor(value) {
-		testElem.style.color = "";
-		testElem.style.color = value;
+		if (typeof value === "string" && !value.indexOf("rgb") && value.split(" ").length === 1) return value;
+		return getCorrectValue("color", value);
+	}
+
+	// ### checkShadow(prop, value, inset)
+	// 检查一个属性是否为阴影
+	// 如果不是阴影，则返回原值
+	// 如果阴影值不合法，则返回默认阴影。
+	// 如果是阴影则返回该阴影的正确形式，同时去掉参数中的多余空格。
+	// 第三个参数表示 boxShadow 的默认阴影是否为内阴影
+	//
+	//    checkShadow("boxShadow", "50px 50px 1px #000");  =>  rgb(0,0,0) 50px 50px 1px 0px
+	//    checkShadow("boxShadow", "none");                =>  rgba(0, 0, 0, 0) 0px 0px 0px 0px
+	//    checkShadow("left", "50px");                     =>  "50px"
+	//
+	function checkShadow(prop, value, inset) {
+		if (prop.indexOf("hadow") < 0) return value;
+		value = getCorrectValue(prop, value);
+		if (!value) {
+			var def = inset && !prop.indexOf("box") ? "inset 0 0 0 transparent" : "0 0 0 transparent";
+			value = getCorrectValue(prop, def);
+		}
+		if (value) value = value.replace(/,\s/g, ",");
+		return value;
+	}
+
+	// ### getCorrectValue(prop, value)
+	// 返回该值的正确形式
+	//
+	//    getCorrectValue("color", "white");                   =>  "rgb(255,255,255)"
+	//    getCorrectValue("boxShadow", "50px 50px 1px #000");  =>  rgb(0, 0, 0) 50px 50px 1px 0px
+	//
+	function getCorrectValue(prop, value) {
+		testElem.style[prop] = "";
+		testElem.style[prop] = value;
 		$testElem.appendTo("body");
-		var color = testElem.style.color !== "" && $testElem.css("color");
+		value = testElem.style[prop] !== "" && testElem.style[prop] !== "none" && $testElem.css(prop);
 		$testElem.detach();
-		return color;
+		return value;
 	}
 
 	// ### calculateColor(begin, end, pos)

@@ -135,6 +135,7 @@ To support the animation of the composite properties.<br>
 ```js
 $("div").animate({ "border-radius": "10px 20px 30px 40px" });
 $("div").animate({ "transform-origin": "100px 300px" });
+$("div").animate({ "box-shadow": "inset 50px 50px 1px #000"});
 ```
 
 
@@ -234,6 +235,9 @@ $.cssEase = {
 
 
 # Changelog
+
+## v1.5.1
+* 现在可以支持 text-shadow 和 box-shadow 的阴影动画了
 
 ## v1.4.2
 * 现在可以正确的识别递增和递减值了，例如：$("div").animate({ left: "+=100%" });
