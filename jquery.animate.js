@@ -1,5 +1,5 @@
 /*!
- * jQuery Animate v1.5.1 - By CSS3 transition
+ * jQuery Animate v1.5.2 - By CSS3 transition
  * @author baijunjie
  *
  * https://github.com/baijunjie/jquery.animate
@@ -767,30 +767,30 @@
 	//    .animate({opacity: "show"})                 =>  .css({opacity: 0}).show().animate({opacity: 1});
 	//    .animate({opacity: "hide"})                 =>  .css({opacity: 1}).animate({opacity: 0}, function() { $(this).hide() });
 	//
-	function disposeSpecialValue($self, props, startProps, callback) {
-		var endStyles = {},
+	function disposeSpecialValue($self, endProps, startProps, callback) {
+		var clearStyles = {},
 			hidden = $self.css("display") === "none",
 			show;
-		for (var p in props) {
-			var value = props[p],
+		for (var p in endProps) {
+			var endValue = endProps[p],
 				curValue = $self.css(p);
 
-			if (value === "show" || value === "toggle") {
+			if (endValue === "show" || endValue === "toggle") {
 				if (hidden) {
 					show = true;
-					value = curValue;
+					endValue = curValue;
 					curValue = 0;
-					endStyles[p] = "";
+					clearStyles[p] = "";
 				} else {
-					value = undefined;
+					endValue = undefined;
 				}
-			} else if (value === "hide" || value === "toggle") {
+			} else if (endValue === "hide" || endValue === "toggle") {
 				if (!hidden) {
 					show = false;
-					value = 0;
-					endStyles[p] = "";
+					endValue = 0;
+					clearStyles[p] = "";
 				} else {
-					value = undefined;
+					endValue = undefined;
 				}
 			}
 
@@ -801,34 +801,34 @@
 			} else if (isKeyword(curValue)) { // 处理关键字
 				var curColor = isColor(curValue);
 				if (!curColor) {
-					curValue = checkShadow(p, curValue, value.indexOf("inset") >= 0); // 如果是阴影属性，则返回一个复合属性
-					if (!isComplex(value)) {
+					curValue = checkShadow(p, curValue, endValue.indexOf("inset") >= 0); // 如果是阴影属性，则返回一个复合属性
+					if (!isComplex(endValue)) {
 						curValue = 0; // 主要针对定位属性，如：left默认为auto
 					}
 				}
 			}
 
-			if (isComplex(value)) {
-				value = checkShadow(p, value);
+			if (isComplex(endValue)) {
+				endValue = checkShadow(p, endValue);
 
-			} else if (isKeyword(value)) {
-				var color = isColor(value);
+			} else if (isKeyword(endValue)) {
+				var color = isColor(endValue);
 				if (!color) {
-					value = checkShadow(p, value, curValue.indexOf("inset") >= 0); // 如果是阴影属性，则返回一个复合属性
-					if (!isComplex(value) && value.match(/^[+-]=/)) { // 主要针对递增或递减值，例如：left: "+=30%"
-						value = calculateValue($self, p, curValue, value, 1);
+					endValue = checkShadow(p, endValue, curValue.indexOf("inset") >= 0); // 如果是阴影属性，则返回一个复合属性
+					if (!isComplex(endValue) && endValue.match(/^[+-]=/)) { // 主要针对递增或递减值，例如：left: "+=30%"
+						endValue = calculateValue($self, p, curValue, endValue, 1);
 					}
 				}
 			}
 
-			if ((typeof value === "undefined")
-			|| (curValue == value)
+			if ((typeof endValue === "undefined")
+			|| (curValue == endValue)
 			|| (!!color ^ !!curColor)) {
-				delete props[p];
+				delete endProps[p];
 				continue;
 			}
 
-			props[p] = value;
+			endProps[p] = endValue;
 			startProps[p] = curValue;
 		}
 
@@ -839,18 +839,18 @@
 				"display": "block",
 				"overflow": "hidden"
 			});
-			endStyles["overflow"] = "";
+			clearStyles["overflow"] = "";
 		} else if (show === false) {
 			$self.css({
 				"overflow": "hidden"
 			});
-			endStyles["display"] = "none";
-			endStyles["overflow"] = "";
+			clearStyles["display"] = "none";
+			clearStyles["overflow"] = "";
 		}
 
 		if (show !== undefined) {
 			fn = function() {
-				$self.css(endStyles);
+				$self.css(clearStyles);
 				if (typeof callback === "function") callback.call(this);
 			};
 		}
@@ -884,15 +884,17 @@
 	function delayRun(next) {
 		var self = this,
 			$self = $(self),
-			params = $self.data("transitionDelayRunParams") || {},
-			transitionValueList = params.transitionValueList,
-			startProps = params.startProps,
+			transitionDelayRunParams = $self.data("transitionDelayRunParams") || [],
+			transitionValueList = transitionDelayRunParams.transitionValueList,
+
+			params = transitionDelayRunParams.paramsQueue[0],
+			startProps = {},
 			endProps = params.endProps,
 			duration = params.duration,
 			easing = params.easing,
 			queue = params.queue,
 			specialEasing = params.specialEasing,
-			callback = params.callback,
+			callback = params.callback = disposeSpecialValue($self, endProps, startProps, params.callback),
 			empty = $.isEmptyObject(endProps);
 
 		// If there"s nothing to do...
@@ -907,7 +909,7 @@
 
 		// Prepare the callback.
 		var cb = function(e) {
-			if (e && e.currentTarget !== e.target) return;
+			transitionDelayRunParams.paramsQueue.shift();
 
 			var i = $.inArray(timer, $.timers);
 			if (i >= 0) $.timers.splice(i, 1);
@@ -920,6 +922,7 @@
 		};
 
 		var stop = function(gotoEnd) {
+			transitionDelayRunParams.paramsQueue.shift();
 			window.clearTimeout(timerID);
 
 			var i = $.inArray(transitionValue, transitionValueList);
@@ -983,7 +986,13 @@
 	// 模拟 .finish() 所需要的方法
 	delayRun.finish = function() {
 		var $self = $(this),
-			params = $self.data("transitionDelayRunParams") || {};
+			transitionDelayRunParams = $self.data("transitionDelayRunParams") || [],
+			params = transitionDelayRunParams.paramsQueue.shift();
+
+		if (!params.startProps) {
+			params.callback = disposeSpecialValue($self, params.endProps, {}, params.callback);
+		}
+
 		$self.css(params.endProps);
 		finishCall(this, params.callback);
 	};
@@ -995,22 +1004,23 @@
 
 		this.each(function() {
 			var $self = $(this),
-				params = $self.data("transitionDelayRunParams") || {};
-
-			params.startProps = {};
-			params.endProps = $.extend(true, {}, properties);
-			params.duration = duration;
-			params.easing = easing;
-			params.queue = queue;
-			params.specialEasing = specialEasing;
-
-			// 处理 endProps 中的特殊值，并获取起始样式，返回新的回调
-			params.callback = disposeSpecialValue($self, params.endProps, params.startProps, callback);
+				transitionDelayRunParams = $self.data("transitionDelayRunParams") || {};
 
 			// 用于分别保存每一个对象的 transition 属性值列表
-			if (!$.isArray(params.transitionValueList)) params.transitionValueList = [];
+			transitionDelayRunParams.transitionValueList = transitionDelayRunParams.transitionValueList || [];
 
-			$self.data("transitionDelayRunParams", params);
+			transitionDelayRunParams.paramsQueue = transitionDelayRunParams.paramsQueue || [];
+
+			transitionDelayRunParams.paramsQueue.push({
+				endProps: $.extend(true, {}, properties),
+				duration: duration,
+				easing: easing,
+				callback: callback,
+				queue: queue,
+				specialEasing: specialEasing
+			});
+
+			$self.data("transitionDelayRunParams", transitionDelayRunParams);
 		});
 
 		// Use jQuery"s fx queue.
@@ -1249,13 +1259,13 @@
 	//
 	//    getUnit("30px")      => "px"
 	//    getUnit("30%")       => "%"
-	//    getUnit("30")        => "px"
+	//    getUnit("30")        => ""
 	//
 	function getUnit(value) {
-		if (typeof value !== "string") return "px";
+		if (typeof value !== "string") return "";
 		var s = value.match(/^[\-0-9\.]+/);
-		if (!s) return "px";
-		return value.substr(s[0].length) || "px";
+		if (!s) return "";
+		return value.substr(s[0].length) || "";
 	}
 
 
@@ -1345,10 +1355,13 @@
 			em = "em",
 			pe = "%",
 			oldUnit = getUnit(value),
-			newUnit = u || px,
+			newUnit = u,
 			newValue = value;
 
 		if (oldUnit != newUnit) {
+			// 这里如果新旧单位不同，那么才将没有单位的一方转为px
+			oldUnit = oldUnit || px;
+			newUnit = newUnit || px;
 			var oldValue = parseFloat(value);
 			if (newUnit === px) {
 				if (oldUnit === pe) {
@@ -1381,7 +1394,7 @@
 	// ### calculateValue($self, begin, end, pos)
 	// 根据 0-1 之间的位置比，计算两个属性值在该位置上的中间值
 	//
-	//    calculateValue($self, "left", 0, 10, .5);              =>  5px
+	//    calculateValue($self, "left", 0, 10, .5);              =>  5
 	//    calculateValue($self, "left", "50px", "100%", .5);     =>  (100 - 50 / $self.parent().width() * 100) * .5 + 50 / $self.parent().width() * 100 + "%"
 	//    calculateValue($self, "left", "50px", "+=100%", .5);   =>  $self.parent().width() * 100% * .5 + 50 + "px"
 	//
@@ -1409,7 +1422,7 @@
 				var ret = rfxnum.exec(end[i]);
 				if (ret) { // 如果结束值为 "+=" 或者 "-="
 					var v = (ret[1] + 1) * ret[2] + ret[3];
-					u = getUnit(startValue); // 单位改用起始值的单位
+					u = getUnit(startValue) || u; // 单位改用起始值的单位
 					v = convertUnit($self, prop, i, v, u);
 					startValue = parseFloat(startValue);
 					endValue = startValue + parseFloat(v);
@@ -1472,7 +1485,7 @@
 	//    isComplex("50px 50px 1px #000");  =>  true
 	//
 	function isComplex(value) {
-		return value.split(" ").length > 1;
+		return (value + "").split(" ").length > 1;
 	}
 
 	// ### isColor(value)

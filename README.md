@@ -236,6 +236,9 @@ $.cssEase = {
 
 # Changelog
 
+## v1.5.2
+* 修复了一个严重的 bug，该 bug 导致动画队列不正常。
+
 ## v1.5.1
 * 现在可以支持 text-shadow 和 box-shadow 的阴影动画了
 
