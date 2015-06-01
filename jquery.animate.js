@@ -794,7 +794,6 @@
 				}
 			}
 
-
 			if (isComplex(curValue)) { // 检查复合值是否为阴影
 				curValue = checkShadow(p, curValue);
 
@@ -887,7 +886,7 @@
 			transitionDelayRunParams = $self.data("transitionDelayRunParams") || [],
 			transitionValueList = transitionDelayRunParams.transitionValueList,
 
-			params = transitionDelayRunParams.paramsQueue[0],
+			params = transitionDelayRunParams.paramsQueue.shift(),
 			startProps = {},
 			endProps = params.endProps,
 			duration = params.duration,
@@ -909,7 +908,6 @@
 
 		// Prepare the callback.
 		var cb = function(e) {
-			transitionDelayRunParams.paramsQueue.shift();
 
 			var i = $.inArray(timer, $.timers);
 			if (i >= 0) $.timers.splice(i, 1);
@@ -922,7 +920,6 @@
 		};
 
 		var stop = function(gotoEnd) {
-			transitionDelayRunParams.paramsQueue.shift();
 			window.clearTimeout(timerID);
 
 			var i = $.inArray(transitionValue, transitionValueList);
@@ -989,9 +986,8 @@
 			transitionDelayRunParams = $self.data("transitionDelayRunParams") || [],
 			params = transitionDelayRunParams.paramsQueue.shift();
 
-		if (!params.startProps) {
-			params.callback = disposeSpecialValue($self, params.endProps, {}, params.callback);
-		}
+		// 能够执行 finish 的动画是没有执行 delayRun 的动画
+		params.callback = disposeSpecialValue($self, params.endProps, {}, params.callback);
 
 		$self.css(params.endProps);
 		finishCall(this, params.callback);
