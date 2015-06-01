@@ -236,6 +236,10 @@ $.cssEase = {
 
 # Changelog
 
+## v1.6.0
+* 集成了 [jQuery Easing v1.3](http://gsgd.co.uk/sandbox/jquery/easing/)
+* 集成了 [jQuery requestAnimationFrame - v0.1.3pre](https://github.com/gnarf37/jquery-requestAnimationFrame)
+
 ## v1.5.2
 * 修复了一个严重的 bug，该 bug 导致动画队列不正常。
 
@@ -269,6 +273,8 @@ This plug-in is written in reference to the following plug-ins, thanks to the au
 __[jquery.transit](https://github.com/rstacruz/jquery.transit)__<br>
 __[jQuery 2D transformations](https://github.com/heygrady/transform/)__<br>
 __[jquery.animate-colors](https://github.com/MilesOkeefe/jquery.animate-colors)__<br>
+__[jQuery Easing v1.3](http://gsgd.co.uk/sandbox/jquery/easing/)__<br>
+__[jQuery requestAnimationFrame - v0.1.3pre](https://github.com/gnarf37/jquery-requestAnimationFrame)__<br>
 
 
 
