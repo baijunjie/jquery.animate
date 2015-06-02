@@ -22,10 +22,10 @@
 	// Integration jQuery Easing v1.3
 	// - http://gsgd.co.uk/sandbox/jquery/easing/
 	$.easing['jswing'] = $.easing['swing'];
-	$.extend( jQuery.easing, {
+	$.extend( $.easing, {
 		def: 'easeOutQuad',
 		swing: function (x, t, b, c, d) {
-			return jQuery.easing[jQuery.easing.def](x, t, b, c, d);
+			return $.easing[$.easing.def](x, t, b, c, d);
 		},
 		easeInQuad: function (x, t, b, c, d) {
 			return c*(t/=d)*t + b;
@@ -134,7 +134,7 @@
 			return c/2*((t-=2)*t*(((s*=(1.525))+1)*t + s) + 2) + b;
 		},
 		easeInBounce: function (x, t, b, c, d) {
-			return c - jQuery.easing.easeOutBounce (x, d-t, 0, c, d) + b;
+			return c - $.easing.easeOutBounce (x, d-t, 0, c, d) + b;
 		},
 		easeOutBounce: function (x, t, b, c, d) {
 			if ((t/=d) < (1/2.75)) {
@@ -148,8 +148,24 @@
 			}
 		},
 		easeInOutBounce: function (x, t, b, c, d) {
-			if (t < d/2) return jQuery.easing.easeInBounce (x, t*2, 0, c, d) * .5 + b;
-			return jQuery.easing.easeOutBounce (x, t*2-d, 0, c, d) * .5 + c*.5 + b;
+			if (t < d/2) return $.easing.easeInBounce (x, t*2, 0, c, d) * .5 + b;
+			return $.easing.easeOutBounce (x, t*2-d, 0, c, d) * .5 + c*.5 + b;
+		}
+	});
+
+	// 当浏览器不支持 transition 时，如果设置了以下的 Easing，可以使 animate 不至于报错，达到向下兼容的目的
+	$.extend( $.easing, {
+		ease: function (x, t, b, c, d) {
+			return $.easing.easeInOutCubic(x, t, b, c, d);
+		},
+    	easeIn: function (x, t, b, c, d) {
+    		return $.easing.easeInSine(x, t, b, c, d);
+		},
+   		easeOut: function (x, t, b, c, d) {
+   			return $.easing.easeOutSine(x, t, b, c, d);
+		},
+    	easeInOut: function (x, t, b, c, d) {
+    		return $.easing.easeInOutSine(x, t, b, c, d);
 		}
 	});
 
@@ -249,9 +265,9 @@
 		"swing"          : "easeOutQuad", // 和 jQuery Easing 相同，查看详情 https://github.com/gdsmith/jquery.easing
 		"linear"         : "cubic-bezier(0,0,1,1)",
 		"ease"           : "cubic-bezier(.25,.1,.25,1)",
-		"ease-in"        : "cubic-bezier(.42,0,1,1)",
-		"ease-out"       : "cubic-bezier(0,0,.58,1)",
-		"ease-in-out"    : "cubic-bezier(.42,0,.58,1)",
+		"easeIn"         : "cubic-bezier(.42,0,1,1)",
+		"easeOut"        : "cubic-bezier(0,0,.58,1)",
+		"easeInOut"      : "cubic-bezier(.42,0,.58,1)",
 
 		"easeInCubic"    : "cubic-bezier(.550,.055,.675,.190)",
 		"easeOutCubic"   : "cubic-bezier(.215,.61,.355,1)",
@@ -980,7 +996,7 @@
 			} else if (isKeyword(curValue)) { // 处理关键字
 				var curColor = isColor(curValue);
 				if (!curColor) {
-					curValue = checkShadow(p, curValue, endValue.indexOf("inset") >= 0); // 如果是阴影属性，则返回一个复合属性
+					curValue = checkShadow(p, curValue, (endValue + "").indexOf("inset") >= 0); // 如果是阴影属性，则返回一个复合属性
 					if (!isComplex(endValue)) {
 						curValue = 0; // 主要针对定位属性，如：left默认为auto
 					}

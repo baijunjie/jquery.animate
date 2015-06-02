@@ -202,9 +202,9 @@ $.cssEase = {
     "swing":          "easeOutQuad", // 和 jQuery Easing 相同，查看详情 https://github.com/gdsmith/jquery.easing
     "linear":         "cubic-bezier(0,0,1,1)",
     "ease":           "cubic-bezier(.25,.1,.25,1)",
-    "ease-in":        "cubic-bezier(.42,0,1,1)",
-    "ease-out":       "cubic-bezier(0,0,.58,1)",
-    "ease-in-out":    "cubic-bezier(.42,0,.58,1)",
+    "easeIn":         "cubic-bezier(.42,0,1,1)",
+    "easeOut":        "cubic-bezier(0,0,.58,1)",
+    "easeInOut":      "cubic-bezier(.42,0,.58,1)",
 
     "easeInCubic":    "cubic-bezier(.550,.055,.675,.190)",
     "easeOutCubic":   "cubic-bezier(.215,.61,.355,1)",
