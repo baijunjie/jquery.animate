@@ -1,5 +1,5 @@
 /*!
- * jQuery Animate v1.6.0 - By CSS3 transition
+ * jQuery Animate v1.6.1 - By CSS3 transition
  * @author baijunjie
  *
  * https://github.com/baijunjie/jquery.animate
@@ -1144,6 +1144,7 @@
 
 					curProp[p] = dv;
 				}
+
 				$self.css(curProp);
 			}
 		};
@@ -1639,7 +1640,11 @@
 			value.push(begin[i]);
 		}
 
-		return value.join(" ");
+		value = value.join(" ");
+
+		var numberValue = parseFloat(value);
+
+		return value == numberValue ? numberValue : value;
 	}
 
 

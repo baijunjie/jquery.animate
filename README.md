@@ -236,6 +236,9 @@ $.cssEase = {
 
 # Changelog
 
+## v1.6.1
+* 修复了一个 .stop() 停止位置错误的bug
+
 ## v1.6.0
 * 集成了 [jQuery Easing v1.3](http://gsgd.co.uk/sandbox/jquery/easing/)
 * 集成了 [jQuery requestAnimationFrame - v0.1.3pre](https://github.com/gnarf37/jquery-requestAnimationFrame)
