@@ -1,5 +1,5 @@
 /*!
- * jQuery Animate v1.6.1 - By CSS3 transition
+ * jQuery Animate v1.6.2 - By CSS3 transition
  * @author baijunjie
  *
  * https://github.com/baijunjie/jquery.animate
@@ -968,14 +968,16 @@
 			hidden = $self.css("display") === "none",
 			show;
 		for (var p in endProps) {
-			var endValue = endProps[p],
-				curValue = $self.css(p);
+			var startValue = $self.css(p),
+				endValue = endProps[p],
+				startUnit = getUnit(startValue),
+				endUnit = getUnit(endValue);
 
 			if (endValue === "show" || endValue === "toggle") {
 				if (hidden) {
 					show = true;
-					endValue = curValue;
-					curValue = 0;
+					endValue = startValue;
+					startValue = 0;
 					clearStyles[p] = "";
 				} else {
 					endValue = undefined;
@@ -990,17 +992,19 @@
 				}
 			}
 
-			if (isComplex(curValue)) { // 检查复合值是否为阴影
-				curValue = checkShadow(p, curValue);
+			if (isComplex(startValue)) { // 检查复合值是否为阴影
+				startValue = checkShadow(p, startValue);
 
-			} else if (isKeyword(curValue)) { // 处理关键字
-				var curColor = isColor(curValue);
+			} else if (isKeyword(startValue)) { // 处理关键字
+				var curColor = isColor(startValue);
 				if (!curColor) {
-					curValue = checkShadow(p, curValue, (endValue + "").indexOf("inset") >= 0); // 如果是阴影属性，则返回一个复合属性
+					startValue = checkShadow(p, startValue, (endValue + "").indexOf("inset") >= 0); // 如果是阴影属性，则返回一个复合属性
 					if (!isComplex(endValue)) {
-						curValue = 0; // 主要针对定位属性，如：left默认为auto
+						startValue = 0; // 主要针对定位属性，如：left默认为auto
 					}
 				}
+			} else if (!startUnit && endUnit) {
+				startValue += endUnit;
 			}
 
 			if (isComplex(endValue)) {
@@ -1009,22 +1013,24 @@
 			} else if (isKeyword(endValue)) {
 				var color = isColor(endValue);
 				if (!color) {
-					endValue = checkShadow(p, endValue, curValue.indexOf("inset") >= 0); // 如果是阴影属性，则返回一个复合属性
+					endValue = checkShadow(p, endValue, startValue.indexOf("inset") >= 0); // 如果是阴影属性，则返回一个复合属性
 					if (!isComplex(endValue) && endValue.match(/^[+-]=/)) { // 主要针对递增或递减值，例如：left: "+=30%"
-						endValue = calculateValue($self, p, curValue, endValue, 1);
+						endValue = calculateValue($self, p, startValue, endValue, 1);
 					}
 				}
+			} else if (!endUnit && startUnit) {
+				endValue += startUnit;
 			}
 
 			if ((typeof endValue === "undefined")
-			|| (curValue == endValue)
+			|| (startValue == endValue)
 			|| (!!color ^ !!curColor)) {
 				delete endProps[p];
 				continue;
 			}
 
 			endProps[p] = endValue;
-			startProps[p] = curValue;
+			startProps[p] = startValue;
 		}
 
 		var fn = callback;
@@ -1545,18 +1551,14 @@
 	//
 	//    convertUnit($self, "margin", 1, 100px, %)  =>  (100 / $self.parent().width()) * 100 + "%"
 	//
-	function convertUnit($self, prop, index, value, u) {
+	function convertUnit($self, prop, index, value, newUnit) {
 		var px = "px",
 			em = "em",
 			pe = "%",
 			oldUnit = getUnit(value),
-			newUnit = u,
 			newValue = value;
 
 		if (oldUnit != newUnit) {
-			// 这里如果新旧单位不同，那么才将没有单位的一方转为px
-			oldUnit = oldUnit || px;
-			newUnit = newUnit || px;
 			var oldValue = parseFloat(value);
 			if (newUnit === px) {
 				if (oldUnit === pe) {
@@ -1605,7 +1607,8 @@
 		for (; i < l; i++) {
 			var startValue = begin[i] || 0,
 				endValue = end[i],
-				u = getUnit(endValue);
+				startUnit = getUnit(startValue),
+				endUnit = getUnit(endValue) || startUnit;
 
 			if (isColor(endValue)) {
 				startValue = parseColor(startValue);
@@ -1617,21 +1620,21 @@
 				var ret = rfxnum.exec(end[i]);
 				if (ret) { // 如果结束值为 "+=" 或者 "-="
 					var v = (ret[1] + 1) * ret[2] + ret[3];
-					u = getUnit(startValue) || u; // 单位改用起始值的单位
-					v = convertUnit($self, prop, i, v, u);
+					endUnit = startUnit || endUnit; // 单位改用起始值的单位
+					v = convertUnit($self, prop, i, v, endUnit);
 					startValue = parseFloat(startValue);
 					endValue = startValue + parseFloat(v);
 
-					value[i] = (endValue - startValue) * pos + startValue + u;
+					value[i] = (endValue - startValue) * pos + startValue + endUnit;
 				} else { // 如果是关键字，就保留原值
 					value[i] = endValue;
 				}
 			} else {
 				endValue = parseFloat(endValue);
-				startValue = convertUnit($self, prop, i, startValue, u);
+				startValue = convertUnit($self, prop, i, startValue, endUnit);
 				startValue = parseFloat(startValue);
 
-				value[i] = (endValue - startValue) * pos + startValue + u;
+				value[i] = (endValue - startValue) * pos + startValue + endUnit;
 			}
 		}
 
