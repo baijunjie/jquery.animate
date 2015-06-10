@@ -236,8 +236,6 @@ $.cssEase = {
 
 # Changelog
 
-## v1.6.2
-* 修复了使用同一个 Transform 属性在 .css() 修改后，紧接着调用 .animate() 时，动画有时会失效的bug
 
 ## v1.6.1
 * 修复了一个 .stop() 停止位置错误的bug

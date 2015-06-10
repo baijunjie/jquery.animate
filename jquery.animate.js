@@ -1,5 +1,5 @@
 /*!
- * jQuery Animate v1.6.2 - By CSS3 transition
+ * jQuery Animate v1.6.1 - By CSS3 transition
  * @author baijunjie
  *
  * https://github.com/baijunjie/jquery.animate
@@ -1100,7 +1100,7 @@
 		}
 
 		$self.css(startProps);
-		self.offsetWidth = self.offsetWidth; // 强制刷新
+		self.offsetWidth; // 强制刷新
 
 		// Prepare the callback.
 		var cb = function(e) {
