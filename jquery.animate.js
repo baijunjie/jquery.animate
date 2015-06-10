@@ -969,9 +969,7 @@
 			show;
 		for (var p in endProps) {
 			var startValue = $self.css(p),
-				endValue = endProps[p],
-				startUnit = getUnit(startValue),
-				endUnit = getUnit(endValue);
+				endValue = endProps[p];
 
 			if (endValue === "show" || endValue === "toggle") {
 				if (hidden) {
@@ -991,6 +989,9 @@
 					endValue = undefined;
 				}
 			}
+
+			var startUnit = getUnit(startValue),
+				endUnit = getUnit(endValue);
 
 			if (isComplex(startValue)) { // 检查复合值是否为阴影
 				startValue = checkShadow(p, startValue);
