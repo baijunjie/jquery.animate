@@ -236,6 +236,9 @@ $.cssEase = {
 
 # Changelog
 
+## v1.6.3
+* 修复了一个bug，该bug导致 .slideUp() 一半时调用 .stop().slideDown()，导致动画停止
+
 
 ## v1.6.2
 * 优化了动画属性起始值与结束值之间的单位转换
