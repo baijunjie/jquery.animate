@@ -972,6 +972,8 @@
 				endValue = endProps[p];
 
 			if (endValue === "show" || endValue === "toggle") {
+				clearStyles[p] = "";
+
 				var originalValue = $self.css(p, "").css(p);
 				$self.css(p, startValue);
 
@@ -979,16 +981,16 @@
 					show = true;
 					endValue = originalValue;
 					if (hidden) startValue = 0;
-					clearStyles[p] = "";
 				} else {
 					endValue = undefined;
 				}
 
 			} else if (endValue === "hide" || endValue === "toggle") {
+				clearStyles[p] = "";
+
 				if (!hidden) {
 					show = false;
 					endValue = 0;
-					clearStyles[p] = "";
 				} else {
 					endValue = undefined;
 				}
