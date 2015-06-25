@@ -1,5 +1,5 @@
 /*!
- * jQuery Animate v1.6.3 - By CSS3 transition
+ * jQuery Animate v1.6.4 - By CSS3 transition
  * @author baijunjie
  *
  * https://github.com/baijunjie/jquery.animate
@@ -1704,8 +1704,11 @@
 	//    isColor("auto");   =>  false
 	//
 	function isColor(value) {
-		if (typeof value === "string" && !value.indexOf("rgb") && value.split(" ").length === 1) return value;
-		return getCorrectValue("color", value);
+		if (typeof value === "string") {
+			if (!value.indexOf("rgb") && value.split(" ").length === 1) return value;
+			return getCorrectValue("color", value);
+		}
+		return false;
 	}
 
 	// ### checkShadow(prop, value, inset)

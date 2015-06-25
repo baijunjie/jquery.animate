@@ -236,8 +236,11 @@ $.cssEase = {
 
 # Changelog
 
+## v1.6.4
+* 修复了一个bug，该bug导致 ie 浏览器中会将数字判断为颜色值
+
 ## v1.6.3
-* 修复了一个bug，该bug导致 .slideUp() 一半时调用 .stop().slideDown()，导致动画停止
+* 修复了一个bug，该bug导致 .slideUp() 动画运行一半时调用 .stop().slideDown() 动画就会停止
 
 
 ## v1.6.2
