@@ -241,7 +241,7 @@
 	var support = {};
 	support.transform          = getSupportPropertyName("transform");
 
-	if (!support.transform) return;
+	if (!support.transform) return $;
 
 	support.transformOrigin    = getSupportPropertyName("transformOrigin");
 	support.transformStyle     = getSupportPropertyName("transformStyle");
