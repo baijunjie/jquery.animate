@@ -236,11 +236,14 @@ $.cssEase = {
 
 # Changelog
 
+## v1.6.5
+* 修复了一个 bug，该 bug 导致 img 元素的 translate 属性在使用 jQuery 源生 .animate() 方法时会不正常
+
 ## v1.6.4
-* 修复了一个bug，该bug导致 ie 浏览器中会将数字判断为颜色值
+* 修复了一个 bug，该 bug 导致 ie 浏览器中会将数字判断为颜色值
 
 ## v1.6.3
-* 修复了一个bug，该bug导致 .slideUp() 动画运行一半时调用 .stop().slideDown() 动画就会停止
+* 修复了一个 bug，该 bug 导致 .slideUp() 动画运行一半时调用 .stop().slideDown() 动画就会停止
 
 
 ## v1.6.2

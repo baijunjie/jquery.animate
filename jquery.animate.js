@@ -1,5 +1,5 @@
 /*!
- * jQuery Animate v1.6.4 - By CSS3 transition
+ * jQuery Animate v1.6.5 - By CSS3 transition
  * @author baijunjie
  *
  * https://github.com/baijunjie/jquery.animate
@@ -1354,14 +1354,24 @@
 
 		// 如果不支持 transition 动画，或者不支持该缓动类型，再或者动画属性中包含不支持的属性，则使用 animate 实现
 		if (!useTransition) {
+
+			// 修复一个 <img> 动画的 bug，该 bug 仅在 animate() 动画中才会出现
+			//
+			// jQuery 源码 6987 行
+			// if ( tween.elem[ tween.prop ] != null &&
+			// 	(!tween.elem.style || tween.elem.style[ tween.prop ] == null) ) {
+			// 	return tween.elem[ tween.prop ];
+			// }
+			//
+			// 这段代码检查元素是否定义了该属性，如果定义了，并且元素的style属性中未定义该属性，则直接返回该属性值
+			// 由于 <img> 自身拥有 x,y 这两个属性，因此最终导致了 <img> 元素的 x,y 动画起始位置不正确
+			this.each(function() {
+				if (this.x != null) delete this.x;
+				if (this.y != null) delete this.y;
+			});
+
 			return _animate.call(this, originalProperties, originalDuration, originalEasing, originalCallback);
 		}
-
-		// Solve the <img> (x, y) animation bug always starting from 0
-		this.each(function() {
-			if (this.x != null) delete this.x;
-			if (this.y != null) delete this.y;
-		});
 
 		// normalize opt.queue - true/undefined/null -> "fx"
 		if (queue == null || queue === true) {
