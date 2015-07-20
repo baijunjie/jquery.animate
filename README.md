@@ -236,6 +236,9 @@ $.cssEase = {
 
 # Changelog
 
+## v1.6.6
+* 修复了在window平台下的safari浏览器下，删除img属性会导致程序报错的问题
+
 ## v1.6.5
 * 修复了一个 bug，该 bug 导致 img 元素的 translate 属性在使用 jQuery 源生 .animate() 方法时会不正常
 

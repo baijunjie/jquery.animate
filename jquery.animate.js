@@ -1,5 +1,5 @@
 /*!
- * jQuery Animate v1.6.5 - By CSS3 transition
+ * jQuery Animate v1.6.6 - By CSS3 transition
  * @author baijunjie
  *
  * https://github.com/baijunjie/jquery.animate
@@ -1366,8 +1366,12 @@
 			// 这段代码检查元素是否定义了该属性，如果定义了，并且元素的style属性中未定义该属性，则直接返回该属性值
 			// 由于 <img> 自身拥有 x,y 这两个属性，因此最终导致了 <img> 元素的 x,y 动画起始位置不正确
 			this.each(function() {
-				if (this.x != null) delete this.x;
-				if (this.y != null) delete this.y;
+				try {
+					// 在window平台下的safari浏览器下，删除属性会导致程序报错
+					// 不过在该环境下即使不删除这两个属性，动画也不会出现问题
+					if (this.x != null) delete this.x;
+					if (this.y != null) delete this.y;
+				} catch(e) {}
 			});
 
 			return _animate.call(this, originalProperties, originalDuration, originalEasing, originalCallback);
