@@ -236,6 +236,9 @@ $.cssEase = {
 
 # Changelog
 
+## v1.6.7
+* 修复了 .fadeIn(durtion) 等从无到有动画会将 inline-block 元素变成 block 元素的问题  
+
 ## v1.6.6
 * 修复了在window平台下的safari浏览器下，删除img属性会导致程序报错的问题
 
