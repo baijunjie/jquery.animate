@@ -1,5 +1,5 @@
 /*!
- * jQuery Animate v1.6.8 - By CSS3 transition
+ * jQuery Animate v1.6.9 - By CSS3 transition
  * @author baijunjie
  *
  * https://github.com/baijunjie/jquery.animate
@@ -971,7 +971,7 @@
 			var startValue = $self.css(p),
 				endValue = endProps[p];
 
-			if (endValue === "show" || endValue === "toggle") {
+			if (endValue === "show" || endValue === "toggle" && hidden) {
 				clearStyles[p] = "";
 
 				var originalValue = $self.css(p, "").css(p);
@@ -985,7 +985,7 @@
 					endValue = undefined;
 				}
 
-			} else if (endValue === "hide" || endValue === "toggle") {
+			} else if (endValue === "hide" || endValue === "toggle" && !hidden) {
 				clearStyles[p] = "";
 
 				if (!hidden) {

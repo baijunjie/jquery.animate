@@ -236,6 +236,9 @@ $.cssEase = {
 
 # Changelog
 
+## v1.6.9
+* 修复了 toggle、fadeToggle、slideToggle 等动画无效的问题
+
 ## v1.6.8
 * 修复了 show/hide、fadeIn/fadeOut、slideDown/slideUp 等从无到有动画会结束后，会将原有的 overflow 的内联样式置空的问题
 
