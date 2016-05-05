@@ -236,6 +236,9 @@ $.cssEase = {
 
 # Changelog
 
+## v1.6.10
+* toggle、fadeToggle、slideToggle 的效果更佳接近 jQuery 源生的效果
+
 ## v1.6.9
 * 修复了 toggle、fadeToggle、slideToggle 等动画无效的问题
 

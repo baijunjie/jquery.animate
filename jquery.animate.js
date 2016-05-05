@@ -1,5 +1,5 @@
 /*!
- * jQuery Animate v1.6.9 - By CSS3 transition
+ * jQuery Animate v1.6.10 - By CSS3 transition
  * @author baijunjie
  *
  * https://github.com/baijunjie/jquery.animate
@@ -315,7 +315,7 @@
 	//
 	$.cssHooks.transform = {
 		get: function(elem) {
-			return $.data(elem, "transform") || new Transform();
+			return $.data(elem, "bjj-transform") || new Transform();
 		},
 		set: function(elem, v) {
 			var value = v;
@@ -326,7 +326,7 @@
 
 			elem.style[support.transform] = value.toString();
 
-			$.data(elem, "transform", value);
+			$.data(elem, "bjj-transform", value);
 		}
 	};
 
@@ -966,30 +966,35 @@
 	function disposeSpecialValue($self, endProps, startProps, callback) {
 		var clearStyles = {},
 			hidden = $self.css("display") === "none",
+			toggle = $self.data("bjj-toggle"),
 			show;
+
 		for (var p in endProps) {
 			var startValue = $self.css(p),
-				endValue = endProps[p];
+				endValue = endProps[p],
+				isToggle = endValue === "toggle";
 
-			if (endValue === "show" || endValue === "toggle" && hidden) {
+			if (endValue === "show" || isToggle && (show === true || show === undefined && (hidden || toggle === false))) {
 				clearStyles[p] = "";
+				if (isToggle) $self.data("bjj-toggle", true);
 
 				var originalValue = $self.css(p, "").css(p);
 				$self.css(p, startValue);
 
-				if (hidden || startValue != originalValue) {
-					show = true;
+				if (hidden || toggle === false || startValue != originalValue) {
+					if (show === undefined) show = true;
 					endValue = originalValue;
 					if (hidden) startValue = 0;
 				} else {
 					endValue = undefined;
 				}
 
-			} else if (endValue === "hide" || endValue === "toggle" && !hidden) {
+			} else if (endValue === "hide" || isToggle && (show === false || show === undefined && (!hidden || toggle === true))) {
 				clearStyles[p] = "";
+				if (isToggle) $self.data("bjj-toggle", false);
 
-				if (!hidden) {
-					show = false;
+				if (!hidden || toggle === true) {
+					if (show === undefined) show = false;
 					endValue = 0;
 				} else {
 					endValue = undefined;
@@ -1045,6 +1050,12 @@
 		if (show === true) {
 			clearStyles["overflow"] = $self[0].style.overflow;
 			$self.css("overflow", "hidden").show();
+			// Height/width overflow pass
+			if ("height" in clearStyles || "width" in clearStyles) {
+				if ($self.css("display") === "inline" && $self.css("float") === "none") {
+					$self.css("display", "inline-block");
+				}
+			}
 		} else if (show === false) {
 			clearStyles["overflow"] = $self[0].style.overflow;
 			$self.css("overflow", "hidden");
@@ -1087,7 +1098,7 @@
 	function delayRun(next) {
 		var self = this,
 			$self = $(self),
-			transitionDelayRunParams = $self.data("transitionDelayRunParams"),
+			transitionDelayRunParams = $self.data("bjj-transitionDelayRunParams"),
 			transitionValueList = transitionDelayRunParams.transitionValueList,
 
 			params = transitionDelayRunParams.queueParams.shift(),
@@ -1188,7 +1199,7 @@
 	// 模拟 .finish() 所需要的方法
 	delayRun.finish = function() {
 		var $self = $(this),
-			transitionDelayRunParams = $self.data("transitionDelayRunParams") || [],
+			transitionDelayRunParams = $self.data("bjj-transitionDelayRunParams") || [],
 			params = transitionDelayRunParams.queueParams.shift();
 
 		// 能够执行 finish 的动画是没有执行 delayRun 的动画
@@ -1205,7 +1216,7 @@
 
 		this.each(function() {
 			var $self = $(this),
-				transitionDelayRunParams = $self.data("transitionDelayRunParams");
+				transitionDelayRunParams = $self.data("bjj-transitionDelayRunParams");
 
 			if (!transitionDelayRunParams) {
 				transitionDelayRunParams = {
@@ -1223,7 +1234,7 @@
 				specialEasing: specialEasing
 			});
 
-			$self.data("transitionDelayRunParams", transitionDelayRunParams);
+			$self.data("bjj-transitionDelayRunParams", transitionDelayRunParams);
 		});
 
 		// Use jQuery"s fx queue.
