@@ -1,5 +1,5 @@
 /*!
- * jQuery Animate v1.6.10 - By CSS3 transition
+ * jQuery Animate v1.6.11 - By CSS3 transition
  * @author baijunjie
  *
  * https://github.com/baijunjie/jquery.animate
@@ -969,6 +969,13 @@
 			toggle = $self.data("bjj-toggle"),
 			show;
 
+		// Height/width overflow pass
+		if ("height" in endProps || "width" in endProps) {
+			if ($self.css("display") === "inline" && $self.css("float") === "none") {
+				$self.css("display", "inline-block");
+			}
+		}
+
 		for (var p in endProps) {
 			var startValue = $self.css(p),
 				endValue = endProps[p],
@@ -1050,12 +1057,6 @@
 		if (show === true) {
 			clearStyles["overflow"] = $self[0].style.overflow;
 			$self.css("overflow", "hidden").show();
-			// Height/width overflow pass
-			if ("height" in clearStyles || "width" in clearStyles) {
-				if ($self.css("display") === "inline" && $self.css("float") === "none") {
-					$self.css("display", "inline-block");
-				}
-			}
 		} else if (show === false) {
 			clearStyles["overflow"] = $self[0].style.overflow;
 			$self.css("overflow", "hidden");

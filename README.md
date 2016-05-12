@@ -236,6 +236,9 @@ $.cssEase = {
 
 # Changelog
 
+## v1.6.11
+* 修复了当元素为inline元素时，涉及到width与height的动画会不正常的问题
+
 ## v1.6.10
 * toggle、fadeToggle、slideToggle 的效果更佳接近 jQuery 源生的效果
 
