@@ -236,6 +236,9 @@ $.cssEase = {
 
 # Changelog
 
+## v1.6.12
+* show/hide/toggle、fadeIn/fadeOut/fadeToggle、slideDown/slideUp/slideToggle 等动画结束后，overflow属性将恢复正常
+
 ## v1.6.11
 * 修复了当元素为inline元素时，涉及到width与height的动画会不正常的问题
 
