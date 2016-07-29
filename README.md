@@ -236,6 +236,9 @@ $.cssEase = {
 
 # Changelog
 
+## v1.6.13
+* 修复了当动画属性值设置为“-=”某个值时，动画无效果的问题
+
 ## v1.6.12
 * show/hide/toggle、fadeIn/fadeOut/fadeToggle、slideDown/slideUp/slideToggle 等动画结束后，overflow属性将恢复正常
 

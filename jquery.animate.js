@@ -1,5 +1,5 @@
 /*!
- * jQuery Animate v1.6.12 - By CSS3 transition
+ * jQuery Animate v1.6.13 - By CSS3 transition
  * @author baijunjie
  *
  * https://github.com/baijunjie/jquery.animate
@@ -1499,7 +1499,7 @@
 	//
 	function getUnit(value) {
 		if (typeof value !== "string") return "";
-		var s = value.match(/^[\-0-9\.]+/);
+		var s = value.match(/^[\0-9+-=\.]+/);
 		if (!s) return "";
 		return value.substr(s[0].length) || "";
 	}
