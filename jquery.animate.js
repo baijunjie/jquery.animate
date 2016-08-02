@@ -1455,7 +1455,7 @@
 	//
 	function getUnit(value) {
 		if (typeof value !== "string") return "";
-		var s = value.match(/^[\0-9+-=\.]+/);
+		var s = value.match(/^(?:\-=|\+=)?[\-0-9\.]+/);
 		if (!s) return "";
 		return value.substr(s[0].length) || "";
 	}
