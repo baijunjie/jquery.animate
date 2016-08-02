@@ -1,5 +1,5 @@
 /*!
- * jQuery Animate v1.6.13 - By CSS3 transition
+ * jQuery Animate v1.7.0 - By CSS3 transition
  * @author baijunjie
  *
  * https://github.com/baijunjie/jquery.animate
@@ -168,50 +168,6 @@
     		return $.easing.easeInOutSine(x, t, b, c, d);
 		}
 	});
-
-
-	// Integration jQuery requestAnimationFrame - v0.1.3pre
-	// - https://github.com/gnarf37/jquery-requestAnimationFrame
-	(function(jQuery) {
-
-		var animating,
-			lastTime = 0,
-			vendors = ['webkit', 'moz'],
-			requestAnimationFrame = window.requestAnimationFrame,
-			cancelAnimationFrame = window.cancelAnimationFrame;
-
-		for(; lastTime < vendors.length && !requestAnimationFrame; lastTime++) {
-			requestAnimationFrame = window[ vendors[lastTime] + "RequestAnimationFrame" ];
-			cancelAnimationFrame = cancelAnimationFrame ||
-				window[ vendors[lastTime] + "CancelAnimationFrame" ] ||
-				window[ vendors[lastTime] + "CancelRequestAnimationFrame" ];
-		}
-
-		function raf() {
-			if ( animating ) {
-				requestAnimationFrame( raf );
-				jQuery.fx.tick();
-			}
-		}
-
-		if ( requestAnimationFrame ) {
-			// use rAF
-			window.requestAnimationFrame = requestAnimationFrame;
-			window.cancelAnimationFrame = cancelAnimationFrame;
-			jQuery.fx.timer = function( timer ) {
-				if ( timer() && jQuery.timers.push( timer ) && !animating ) {
-					animating = true;
-					raf();
-				}
-			};
-
-			jQuery.fx.stop = function() {
-				animating = false;
-			};
-		}
-
-	}($));
-
 
 	var testElem = document.createElement("div"),
 		$testElem = $(testElem);

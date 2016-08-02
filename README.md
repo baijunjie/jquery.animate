@@ -236,6 +236,9 @@ $.cssEase = {
 
 # Changelog
 
+## v1.7.0
+* 由于 jQuery 3.0.0 以及之后的版本已经兼容 requestAnimationFrame API，因此插件中将原有的 [jQuery requestAnimationFrame - v0.1.3pre](https://github.com/gnarf37/jquery-requestAnimationFrame) 移除。
+
 ## v1.6.13
 * 修复了当动画属性值设置为“-=”某个值时，动画无效果的问题
 
