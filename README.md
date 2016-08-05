@@ -236,6 +236,9 @@ $.cssEase = {
 
 # Changelog
 
+## v1.7.1
+* 修复了使用 animate() 设置 {z:0} 时无效的问题
+
 ## v1.7.0
 * 由于 jQuery 3.0.0 以及之后的版本已经兼容 requestAnimationFrame API，因此插件中将原有的 [jQuery requestAnimationFrame - v0.1.3pre](https://github.com/gnarf37/jquery-requestAnimationFrame) 移除。
 

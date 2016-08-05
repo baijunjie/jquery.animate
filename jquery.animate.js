@@ -1,5 +1,5 @@
 /*!
- * jQuery Animate v1.7.0 - By CSS3 transition
+ * jQuery Animate v1.7.1 - By CSS3 transition
  * @author baijunjie
  *
  * https://github.com/baijunjie/jquery.animate
@@ -998,7 +998,7 @@
 			}
 
 			if ((typeof endValue === "undefined")
-			|| (startValue == endValue)
+			//|| (startValue == endValue)
 			|| (!!color ^ !!curColor)) {
 				delete endProps[p];
 				continue;
