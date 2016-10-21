@@ -1,5 +1,5 @@
 /*!
- * jQuery Animate v1.7.1 - By CSS3 transition
+ * jQuery Animate v1.7.2 - By CSS3 transition
  * @author baijunjie
  *
  * https://github.com/baijunjie/jquery.animate
@@ -941,8 +941,9 @@
 				clearStyles[p] = "";
 				if (isToggle) $self.data("bjj-toggle", true);
 
-				var originalValue = $self.css(p, "").css(p);
-				$self.css(p, startValue);
+				var inlineStyleValue = $self[0].style[p],
+					originalValue = $self.css(p, "").css(p);
+				$self.css(p, inlineStyleValue);
 
 				if (hidden || toggle === false || startValue != originalValue) {
 					if (show === undefined) show = true;
@@ -997,7 +998,7 @@
 				endValue += startUnit;
 			}
 
-			if ((typeof endValue === "undefined")
+			if ((endValue === undefined)
 			//|| (startValue == endValue)
 			|| (!!color ^ !!curColor)) {
 				delete endProps[p];
