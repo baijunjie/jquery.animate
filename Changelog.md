@@ -1,5 +1,8 @@
 ﻿# Changelog
 
+## v1.7.3
+* 修复了在使用 fadeIn/fadeOut/fadeToggle 时，动画元素会被添加 overflow: hidden 的问题
+
 ## v1.7.2
 * 修复了使用如 slideDown() 后，临时样式清除不干净的问题
 

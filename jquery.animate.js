@@ -1,5 +1,5 @@
 /*!
- * jQuery Animate v1.7.2 - By CSS3 transition
+ * jQuery Animate v1.7.3 - By CSS3 transition
  * @author baijunjie
  *
  * https://github.com/baijunjie/jquery.animate
@@ -1012,17 +1012,22 @@
 		var fn = callback;
 
 		if (show === true) {
-			if($self.data("bjj-overflow") === undefined) {
-				$self.data("bjj-overflow", $self[0].style.overflow);
+			if ('width' in clearStyles || 'height' in clearStyles) {
+				if($self.data("bjj-overflow") === undefined) {
+					$self.data("bjj-overflow", $self[0].style.overflow);
+				}
+				clearStyles["overflow"] = $self.data("bjj-overflow");
+				$self.css("overflow", "hidden");
 			}
-			clearStyles["overflow"] = $self.data("bjj-overflow");
-			$self.css("overflow", "hidden").show();
+			$self.show();
 		} else if (show === false) {
-			if($self.data("bjj-overflow") === undefined) {
-				$self.data("bjj-overflow", $self[0].style.overflow);
+			if ('width' in clearStyles || 'height' in clearStyles) {
+				if($self.data("bjj-overflow") === undefined) {
+					$self.data("bjj-overflow", $self[0].style.overflow);
+				}
+				clearStyles["overflow"] = "";
+				$self.css("overflow", "hidden");
 			}
-			clearStyles["overflow"] = "";
-			$self.css("overflow", "hidden");
 			clearStyles["display"] = "none";
 		}
 
