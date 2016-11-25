@@ -10,7 +10,6 @@ Rewrite the **jQuery.animate**'s default behavior, The priority use **CSS3 Trans
 ## 为什么使用？ / Why use?
 
 这个插件是对**jQuery.animate**方法的改写，你不需要考虑修改你的代码，你只需要导入插件，就可以让你所有的**jQuery**动画转化为**CSS3 Transition**。
-
 This plugin is the rewriting of **jQuery.animate** method, you do not need to consider modifying your code, you just need to include plug-in, can let all of your **jQuery** animation into **CSS3 Transition**.
 
 
@@ -64,7 +63,6 @@ $('div').css({ skewY: 60 });                        //=> skewY(60deg)
 $('div').css({ skew: [30,60] });                    //=> skewX(30deg) skewY(60deg)
 ```
 
-
 设置透视点。
 Set perspective.
 
@@ -74,9 +72,9 @@ $('div').css({ 'perspective': 100 });  //=>  perspective: 100px;
 $('div').css({ 'pers': 100 });         //=>  transform: perspective(100px);
 ```
 
-
 读取属性值。
 Read the attribute value.
+
 ``` js
 $('div').css({ x: 100 }).css('x');                       //=> '100px'
 $('div').css({ x: 100, y: 200 }).css('translate');       //=> ['100px', '200px']
@@ -84,9 +82,9 @@ $('div').css({ scaleX: 3, scaleY: 3 }).css('scale');     //=> '3'
 $('div').css({ scaleX: 3 }).css('scale');                //=> ['3','1']
 ```
 
-
 支持删除属性。
 Support delete attributes.
+
 ```js
 .css({ translate: '2, 5' });                 //=> 'translate(2px, 5px)'
 .css({ translate: '' });                     //=> remove 'translate(2px, 5px)'
@@ -140,7 +138,6 @@ $('div').animate({ 'scale': [1, 2] });        //=> scale(1,2)
 $('div').animate({ 'rotate3d': '30,20,90' }); //=> rotateX(60deg) rotateY(30deg)
 ```
 
-
 支持复合属性的动画。
 To support the animation of the composite properties.
 
@@ -150,9 +147,9 @@ $('div').animate({ 'transform-origin': '100px 300px' });
 $('div').animate({ 'box-shadow': 'inset 50px 50px 1px #000'});
 ```
 
-
 可以完美支持 **.stop()** 以及 **.finish()** 方法。
 Can perfect support **.stop()** and **.finish()** method.
+
 ```js
 $('div').animate({ x: 200 }, 2000, 'easeInOutBack');
 window.setTimeout(function() {
@@ -178,7 +175,6 @@ window.setTimeout(function() {
     console.log($('div').css('background-color'));  //=> ≈ rgb(107, 107, 107)
 }, 1000);
 ```
-
 
 注意，由于 **CSS3 Transition** 动画的只支持三次贝塞尔曲线，因此[jQuery.easing]中的某些缓动无法支持，比如：Bounce。
 如果使用了它不支持的 **Easing**，那么将会使用原来的 **jQuery.animate** 方法来实现该动画。
@@ -207,7 +203,6 @@ div {
 	transition: transform 2000ms easeOutBack;
 }
 ```
-
 
 以下是插件支持的缓动列表。
 The following is a list of transit support slow.
@@ -255,11 +250,11 @@ $.cssEase = {
 这个插件是参考以下插件编写的，感谢作者！ 
 This plug-in is written in reference to the following plug-ins, thanks to the author!
 
-__[jquery.transit](https://github.com/rstacruz/jquery.transit)__
-__[jQuery 2D transformations](https://github.com/heygrady/transform/)__
-__[jquery.animate-colors](https://github.com/MilesOkeefe/jquery.animate-colors)__
-__[jQuery Easing v1.3](http://gsgd.co.uk/sandbox/jquery/easing/)__
-__[jQuery requestAnimationFrame - v0.1.3pre](https://github.com/gnarf37/jquery-requestAnimationFrame)__
+[**jquery.transit**](https://github.com/rstacruz/jquery.transit)
+[**jQuery 2D transformations**](https://github.com/heygrady/transform/)
+[**jquery.animate-colors**](https://github.com/MilesOkeefe/jquery.animate-colors)
+[**jQuery Easing v1.3**](http://gsgd.co.uk/sandbox/jquery/easing/)
+[**jQuery requestAnimationFrame - v0.1.3pre**](https://github.com/gnarf37/jquery-requestAnimationFrame)
 
 
 
