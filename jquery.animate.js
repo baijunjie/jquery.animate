@@ -1,23 +1,23 @@
 /*!
- * jQuery Animate v1.7.3 - By CSS3 transition
+ * jQuery Animate v1.8.0 - By CSS3 transition
  * @author baijunjie
  *
  * https://github.com/baijunjie/jquery.animate
  */
 
 (function(root, factory) {
-	"use strict";
+	'use strict';
 
-	if (typeof define === "function" && define.amd) {
-		define(["jquery"], factory);
-	} else if (typeof exports === "object") {
-		module.exports = factory(require("jquery"));
+	if (typeof define === 'function' && define.amd) {
+		define(['jquery'], factory);
+	} else if (typeof exports === 'object') {
+		module.exports = factory(require('jquery'));
 	} else {
 		factory(root.jQuery);
 	}
 
 }(this, function($) {
-	"use strict";
+	'use strict';
 
 	// Integration jQuery Easing v1.3
 	// - http://gsgd.co.uk/sandbox/jquery/easing/
@@ -169,14 +169,14 @@
 		}
 	});
 
-	var testElem = document.createElement("div"),
+	var testElem = document.createElement('div'),
 		$testElem = $(testElem);
 	// 返回支持的属性名
 	function getSupportPropertyName(prop) {
 		if (prop in testElem.style) return prop;
 
 		var testProp = prop.charAt(0).toUpperCase() + prop.substr(1),
-			prefixs = [ "Webkit", "Moz", "ms", "O" ];
+			prefixs = [ 'Webkit', 'Moz', 'ms', 'O' ];
 
 		for (var i = 0, l = prefixs.length; i < l; i++) {
 			var prefixProp = prefixs[i] + testProp;
@@ -188,90 +188,90 @@
 
 	// 检查是否支持3D
 	function checkTransform3dSupport() {
-		testElem.style[support.transform] = "";
-		testElem.style[support.transform] = "rotateY(90deg)";
-		return testElem.style[support.transform] !== "";
+		testElem.style[support.transform] = '';
+		testElem.style[support.transform] = 'rotateY(90deg)';
+		return testElem.style[support.transform] !== '';
 	}
 
 	// 检查浏览器的 transition 支持
 	var support = {};
-	support.transform          = getSupportPropertyName("transform");
+	support.transform          = getSupportPropertyName('transform');
 
 	if (!support.transform) return $;
 
-	support.transformOrigin    = getSupportPropertyName("transformOrigin");
-	support.transformStyle     = getSupportPropertyName("transformStyle");
-	support.perspective        = getSupportPropertyName("perspective");
-	support.perspectiveOrigin  = getSupportPropertyName("perspectiveOrigin");
-	support.backfaceVisibility = getSupportPropertyName("backfaceVisibility");
-	support.filter             = getSupportPropertyName("filter");
-	support.transition         = getSupportPropertyName("transition");
+	support.transformOrigin    = getSupportPropertyName('transformOrigin');
+	support.transformStyle     = getSupportPropertyName('transformStyle');
+	support.perspective        = getSupportPropertyName('perspective');
+	support.perspectiveOrigin  = getSupportPropertyName('perspectiveOrigin');
+	support.backfaceVisibility = getSupportPropertyName('backfaceVisibility');
+	support.filter             = getSupportPropertyName('filter');
+	support.transition         = getSupportPropertyName('transition');
 	support.transform3d        = checkTransform3dSupport();
 
 	// 将检测到的支持结果写入 $.support
 	for (var key in support) {
-		if (typeof $.support[key] === "undefined") {
+		if (typeof $.support[key] === 'undefined') {
 			$.support[key] = support[key];
 		}
 	}
 
 	// 缓动列表
 	$.cssEase = {
-		"_default"       : "swing",
-		"swing"          : "easeOutQuad", // 和 jQuery Easing 相同，查看详情 https://github.com/gdsmith/jquery.easing
-		"linear"         : "cubic-bezier(0,0,1,1)",
-		"ease"           : "cubic-bezier(.25,.1,.25,1)",
-		"easeIn"         : "cubic-bezier(.42,0,1,1)",
-		"easeOut"        : "cubic-bezier(0,0,.58,1)",
-		"easeInOut"      : "cubic-bezier(.42,0,.58,1)",
+		'_default'       : 'swing',
+		'swing'          : 'easeOutQuad', // 和 jQuery Easing 相同，查看详情 https://github.com/gdsmith/jquery.easing
+		'linear'         : 'cubic-bezier(0,0,1,1)',
+		'ease'           : 'cubic-bezier(.25,.1,.25,1)',
+		'easeIn'         : 'cubic-bezier(.42,0,1,1)',
+		'easeOut'        : 'cubic-bezier(0,0,.58,1)',
+		'easeInOut'      : 'cubic-bezier(.42,0,.58,1)',
 
-		"easeInCubic"    : "cubic-bezier(.550,.055,.675,.190)",
-		"easeOutCubic"   : "cubic-bezier(.215,.61,.355,1)",
-		"easeInOutCubic" : "cubic-bezier(.645,.045,.355,1)",
-		"easeInCirc"     : "cubic-bezier(.6,.04,.98,.335)",
-		"easeOutCirc"    : "cubic-bezier(.075,.82,.165,1)",
-		"easeInOutCirc"  : "cubic-bezier(.785,.135,.15,.86)",
-		"easeInExpo"     : "cubic-bezier(.95,.05,.795,.035)",
-		"easeOutExpo"    : "cubic-bezier(.19,1,.22,1)",
-		"easeInOutExpo"  : "cubic-bezier(1,0,0,1)",
-		"easeInQuad"     : "cubic-bezier(.55,.085,.68,.53)",
-		"easeOutQuad"    : "cubic-bezier(.25,.46,.45,.94)",
-		"easeInOutQuad"  : "cubic-bezier(.455,.03,.515,.955)",
-		"easeInQuart"    : "cubic-bezier(.895,.03,.685,.22)",
-		"easeOutQuart"   : "cubic-bezier(.165,.84,.44,1)",
-		"easeInOutQuart" : "cubic-bezier(.77,0,.175,1)",
-		"easeInQuint"    : "cubic-bezier(.755,.05,.855,.06)",
-		"easeOutQuint"   : "cubic-bezier(.23,1,.32,1)",
-		"easeInOutQuint" : "cubic-bezier(.86,0,.07,1)",
-		"easeInSine"     : "cubic-bezier(.47,0,.745,.715)",
-		"easeOutSine"    : "cubic-bezier(.39,.575,.565,1)",
-		"easeInOutSine"  : "cubic-bezier(.445,.05,.55,.95)",
-		"easeInBack"     : "cubic-bezier(.6,-.28,.735,.045)",
-		"easeOutBack"    : "cubic-bezier(.175, .885,.32,1.275)",
-		"easeInOutBack"  : "cubic-bezier(.68,-.55,.265,1.55)"
+		'easeInCubic'    : 'cubic-bezier(.550,.055,.675,.190)',
+		'easeOutCubic'   : 'cubic-bezier(.215,.61,.355,1)',
+		'easeInOutCubic' : 'cubic-bezier(.645,.045,.355,1)',
+		'easeInCirc'     : 'cubic-bezier(.6,.04,.98,.335)',
+		'easeOutCirc'    : 'cubic-bezier(.075,.82,.165,1)',
+		'easeInOutCirc'  : 'cubic-bezier(.785,.135,.15,.86)',
+		'easeInExpo'     : 'cubic-bezier(.95,.05,.795,.035)',
+		'easeOutExpo'    : 'cubic-bezier(.19,1,.22,1)',
+		'easeInOutExpo'  : 'cubic-bezier(1,0,0,1)',
+		'easeInQuad'     : 'cubic-bezier(.55,.085,.68,.53)',
+		'easeOutQuad'    : 'cubic-bezier(.25,.46,.45,.94)',
+		'easeInOutQuad'  : 'cubic-bezier(.455,.03,.515,.955)',
+		'easeInQuart'    : 'cubic-bezier(.895,.03,.685,.22)',
+		'easeOutQuart'   : 'cubic-bezier(.165,.84,.44,1)',
+		'easeInOutQuart' : 'cubic-bezier(.77,0,.175,1)',
+		'easeInQuint'    : 'cubic-bezier(.755,.05,.855,.06)',
+		'easeOutQuint'   : 'cubic-bezier(.23,1,.32,1)',
+		'easeInOutQuint' : 'cubic-bezier(.86,0,.07,1)',
+		'easeInSine'     : 'cubic-bezier(.47,0,.745,.715)',
+		'easeOutSine'    : 'cubic-bezier(.39,.575,.565,1)',
+		'easeInOutSine'  : 'cubic-bezier(.445,.05,.55,.95)',
+		'easeInBack'     : 'cubic-bezier(.6,-.28,.735,.045)',
+		'easeOutBack'    : 'cubic-bezier(.175, .885,.32,1.275)',
+		'easeInOutBack'  : 'cubic-bezier(.68,-.55,.265,1.55)'
 	};
 
 	// 转换easing为贝塞尔函数
 	//
-	//    "swing" => "cubic-bezier(.25,.46,.45,.94)"
+	//    'swing' => 'cubic-bezier(.25,.46,.45,.94)'
 	//
 	function convertEase(easing) {
-		if (typeof easing !== "string") return;
-		if (easing.indexOf("cubic-bezier") !== 0) {
+		if (typeof easing !== 'string') return;
+		if (easing.indexOf('cubic-bezier') !== 0) {
 			easing = $.cssEase[easing];
 			return convertEase(easing);
 		}
 		return easing;
 	}
 
-	// ## "transform" CSS hook
+	// ## 'transform' CSS hook
 	//
-	//    $("div").css({ transform: "rotate(90deg)" });
-	//    $("div").css("transform"); => { rotate: "90deg" }
+	//    $('div').css({ transform: 'rotate(90deg)' });
+	//    $('div').css('transform'); => { rotate: '90deg' }
 	//
 	$.cssHooks.transform = {
 		get: function(elem) {
-			return $.data(elem, "bjj-transform") || new Transform();
+			return $.data(elem, 'bjj-transform') || new Transform();
 		},
 		set: function(elem, v) {
 			var value = v;
@@ -282,16 +282,16 @@
 
 			elem.style[support.transform] = value.toString();
 
-			$.data(elem, "bjj-transform", value);
+			$.data(elem, 'bjj-transform', value);
 		}
 	};
 
 	// jQuery 1.8- 不支持这些属性的前缀转换
-	if (compareVersion("1.8", $.fn.jquery) > 0) {
+	if (compareVersion('1.8', $.fn.jquery) > 0) {
 
-		// ## "transformOrigin" CSS hook
+		// ## 'transformOrigin' CSS hook
 		//
-		//    $("div").css({ transformOrigin: "0 0" });
+		//    $('div').css({ transformOrigin: '0 0' });
 		//
 		$.cssHooks.transformOrigin = {
 			get: function(elem) {
@@ -302,9 +302,9 @@
 			}
 		};
 
-		// ## "transformStyle" CSS hook
+		// ## 'transformStyle' CSS hook
 		//
-		//    $("div").css({ transformStyle: "preserve-3d" });
+		//    $('div').css({ transformStyle: 'preserve-3d' });
 		//
 		$.cssHooks.transformStyle = {
 			get: function(elem) {
@@ -315,9 +315,9 @@
 			}
 		};
 
-		// ## "perspective" CSS hook
+		// ## 'perspective' CSS hook
 		//
-		//    $("div").css({ perspective: "1000px" });
+		//    $('div').css({ perspective: '1000px' });
 		//
 		$.cssHooks.perspective = {
 			get: function(elem) {
@@ -328,9 +328,9 @@
 			}
 		};
 
-		// ## "perspectiveOrigin" CSS hook
+		// ## 'perspectiveOrigin' CSS hook
 		//
-		//    $("div").css({ perspectiveOrigin: "100px 100px" });
+		//    $('div').css({ perspectiveOrigin: '100px 100px' });
 		//
 		$.cssHooks.perspectiveOrigin = {
 			get: function(elem) {
@@ -341,9 +341,9 @@
 			}
 		};
 
-		// ## "backfaceVisibility" CSS hook
+		// ## 'backfaceVisibility' CSS hook
 		//
-		//    $("div").css({ backfaceVisibility: "hidden" });
+		//    $('div').css({ backfaceVisibility: 'hidden' });
 		//
 		$.cssHooks.backfaceVisibility = {
 			get: function(elem) {
@@ -354,9 +354,9 @@
 			}
 		};
 
-		// ## "transition" CSS hook
+		// ## 'transition' CSS hook
 		//
-		//    $("div").css({ transition: "all 0 ease 0" });
+		//    $('div').css({ transition: 'all 0 ease 0' });
 		//
 		$.cssHooks.transition = {
 			get: function(elem) {
@@ -367,9 +367,9 @@
 			}
 		};
 
-		// ## "filter" CSS hook
+		// ## 'filter' CSS hook
 		//
-		//    $("div").css({ filter: "blur(10px)" });
+		//    $('div').css({ filter: 'blur(10px)' });
 		//
 		$.cssHooks.filter = {
 			get: function(elem) {
@@ -383,14 +383,14 @@
 
 	// ## compare version
 	//
-	//    a = "1.11.1",  b = "1.8.2"
+	//    a = '1.11.1',  b = '1.8.2'
 	//    a > b return 1
 	//    a < b return -1
 	//    a = b return 0
 	//
 	function compareVersion(a, b) {
-		var aa = a.split("."),
-			bb = b.split("."),
+		var aa = a.split('.'),
+			bb = b.split('.'),
 			al = aa.length,
 			bl = bb.length,
 			len = Math.max(al, bl),
@@ -408,28 +408,28 @@
 	var propertyMap = {};
 
 	// Register other CSS hooks
-	registerCssHook("x");
-	registerCssHook("y");
-	registerCssHook("z");
-	registerCssHook("translateX");
-	registerCssHook("translateY");
-	registerCssHook("translateZ");
-	registerCssHook("translate");
-	registerCssHook("translate3d");
-	registerCssHook("scale");
-	registerCssHook("scaleX");
-	registerCssHook("scaleY");
-	registerCssHook("scaleZ");
-	registerCssHook("scale3d");
-	registerCssHook("rotate");
-	registerCssHook("rotateX");
-	registerCssHook("rotateY");
-	registerCssHook("rotateZ");
-	registerCssHook("rotate3d");
-	registerCssHook("skew");
-	registerCssHook("skewX");
-	registerCssHook("skewY");
-	registerCssHook("pers");
+	registerCssHook('x');
+	registerCssHook('y');
+	registerCssHook('z');
+	registerCssHook('translateX');
+	registerCssHook('translateY');
+	registerCssHook('translateZ');
+	registerCssHook('translate');
+	registerCssHook('translate3d');
+	registerCssHook('scale');
+	registerCssHook('scaleX');
+	registerCssHook('scaleY');
+	registerCssHook('scaleZ');
+	registerCssHook('scale3d');
+	registerCssHook('rotate');
+	registerCssHook('rotateX');
+	registerCssHook('rotateY');
+	registerCssHook('rotateZ');
+	registerCssHook('rotate3d');
+	registerCssHook('skew');
+	registerCssHook('skewX');
+	registerCssHook('skewY');
+	registerCssHook('pers');
 
 	function registerCssHook(prop, isPixels) {
 		// 所有属性都不应该被强制添加px单位，即使是 translate，因为它也可能是百分比
@@ -441,37 +441,37 @@
 
 		$.cssHooks[prop] = {
 			get: function(elem) {
-				var t = $.css(elem, "transform");
+				var t = $.css(elem, 'transform');
 				return t.get(prop);
 			},
 
 			set: function(elem, value) {
-				var t = $.css(elem, "transform");
+				var t = $.css(elem, 'transform');
 				t.setFromString(prop, value);
-				$.style(elem, "transform", t);
+				$.style(elem, 'transform', t);
 			}
 		};
 	}
 
 	// ## Transform class
 	//
-	//    var t = new Transform("rotate(90) scale(4)");
+	//    var t = new Transform('rotate(90) scale(4)');
 	//
 	// Set properties
 	//
-	//    t.set("rotate", 40)
+	//    t.set('rotate', 40)
 	//
 	// Get properties
 	//
-	//    t.rotate             => "40deg"
-	//    t.scale              => "4"
+	//    t.rotate             => '40deg'
+	//    t.scale              => '4'
 	//
 	// The output string
 	//
-	//    t.toString()         => "rotate(40deg) scale(4)"
+	//    t.toString()         => 'rotate(40deg) scale(4)'
 	//
 	function Transform(str) {
-		if (typeof str === "string") {
+		if (typeof str === 'string') {
 			this.parse(str);
 		}
 	}
@@ -479,8 +479,8 @@
 	Transform.prototype = {
 		// ### setFromString()
 		//
-		//    t.setFromString("scale", "2,4");  => ["scale", "2", "4"]
-		//    t.setFromString("scale", [,4]);   => ["scale", null, "4"]
+		//    t.setFromString('scale', '2,4');  => ['scale', '2', '4']
+		//    t.setFromString('scale', [,4]);   => ['scale', null, '4']
 		//
 		setFromString: function(prop, val) {
 			var args;
@@ -491,7 +491,7 @@
 				}
 				args = val;
 			} else {
-				args = (typeof val === "string") ? val.split(",") : [val];
+				args = (typeof val === 'string') ? val.split(',') : [val];
 			}
 
 			args.unshift(prop);
@@ -504,7 +504,7 @@
 			if (this.setter[prop]) {
 				this.setter[prop].apply(this, args);
 			} else {
-				this[prop] = args.join(",");
+				this[prop] = args.join(',');
 			}
 		},
 
@@ -519,228 +519,228 @@
 		setter: {
 			// ### x / y / z
 			//
-			//    .css({ x: 4 })       => "translate(4px, 0)"
-			//    .css({ y: 10 })      => "translate(4px, 10px)"
-			//    .css({ z: 5 })       => "translate(4px, 10px) translateZ(5px)"
+			//    .css({ x: 4 })       => 'translate(4px, 0)'
+			//    .css({ y: 10 })      => 'translate(4px, 10px)'
+			//    .css({ z: 5 })       => 'translate(4px, 10px) translateZ(5px)'
 			//
 			x: function(x) {
-				this.set("translate", x, null);
+				this.set('translate', x, null);
 			},
 
 			y: function(y) {
-				this.set("translate", null, y);
+				this.set('translate', null, y);
 			},
 
 			z: function(z) {
-				this.setProp("translateZ", z, "px");
+				this.setProp('translateZ', z, 'px');
 			},
 
 			translateX: function(x) {
-				this.set("x", x);
+				this.set('x', x);
 			},
 			translateY: function(y) {
-				this.set("y", y);
+				this.set('y', y);
 			},
 			translateZ: function(z) {
-				this.set("z", z);
+				this.set('z', z);
 			},
 
 			// ### translate
 			//
-			//    .css({ translate: "2, 5" })    => "translate(2px, 5px)"
-			//    .css({ translate: "" })        => remove "translate(2px, 5px)"
+			//    .css({ translate: '2, 5' })    => 'translate(2px, 5px)'
+			//    .css({ translate: '' })        => remove 'translate(2px, 5px)'
 			//
 			translate: function(x, y) {
 				if (y === undefined) {
 					y = x;
 				}
-				this.setDoubleProp("translate", x, y, "px");
+				this.setDoubleProp('translate', x, y, 'px');
 			},
 			// ### translate3d
 			//
-			//    .css("translate3d", [100,200,300]);    => "translate(100px, 200px) translateZ(300px)"
+			//    .css('translate3d', [100,200,300]);    => 'translate(100px, 200px) translateZ(300px)'
 			//
 			translate3d: function(x, y, z) {
 				if (y === undefined && z === undefined) {
 					z = y = x;
 				}
-				this.set("translate", x, y);
-				this.set("z", z);
+				this.set('translate', x, y);
+				this.set('z', z);
 			},
 
 			// ### scale
 			//
-			//    .css({ scale: 3 })        => "scale(3)"
-			//    .css({ scale: "3,2" })    => "scale(3,2)"
+			//    .css({ scale: 3 })        => 'scale(3)'
+			//    .css({ scale: '3,2' })    => 'scale(3,2)'
 			//
 			scale: function(x, y) {
 				if (y === undefined) {
 					y = x;
 				}
-				this.setDoubleProp("scale", x, y, "");
+				this.setDoubleProp('scale', x, y, '');
 			},
 			// ### scale3d
 			//
-			//    .css("scale3d", [1,2,3]);    => "scale(1, 2) scaleZ(3)"
+			//    .css('scale3d', [1,2,3]);    => 'scale(1, 2) scaleZ(3)'
 			//
 			scale3d: function(x, y, z) {
 				if (y === undefined && z === undefined) {
 					z = y = x;
 				}
-				this.set("scale", x, y);
-				this.set("scaleZ", z);
+				this.set('scale', x, y);
+				this.set('scaleZ', z);
 			},
 
 			scaleX: function(x) {
-				this.set("scale", x, null);
+				this.set('scale', x, null);
 			},
 
 			scaleY: function(y) {
-				this.set("scale", null, y);
+				this.set('scale', null, y);
 			},
 
 			scaleZ: function(z) {
-				this.setProp("scaleZ", z, "");
+				this.setProp('scaleZ', z, '');
 			},
 
 			// ### rotate
 			//
 			//    .css({ rotate: 30 })
-			//    .css({ rotate: "30" })
-			//    .css({ rotate: "30deg" })
+			//    .css({ rotate: '30' })
+			//    .css({ rotate: '30deg' })
 			//
 			rotate: function(angle) {
-				this.setProp("rotate", angle, "deg");
+				this.setProp('rotate', angle, 'deg');
 			},
 
 			rotateX: function(angle) {
-				this.setProp("rotateX", angle, "deg");
+				this.setProp('rotateX', angle, 'deg');
 			},
 
 			rotateY: function(angle) {
-				this.setProp("rotateY", angle, "deg");
+				this.setProp('rotateY', angle, 'deg');
 			},
 
 			rotateZ: function(angle) {
-				this.set("rotate", angle);
+				this.set('rotate', angle);
 			},
 
 			rotate3d: function(x, y, z) {
 				if (y === undefined && z === undefined) {
 					z = y = x;
 				}
-				this.set("rotateX", x);
-				this.set("rotateY", y);
-				this.set("rotate", z);
+				this.set('rotateX', x);
+				this.set('rotateY', y);
+				this.set('rotate', z);
 			},
 
 			skew: function(x, y) {
 				if (y === undefined) {
 					y = x;
 				}
-				this.set("skewX", x);
-				this.set("skewY", y);
+				this.set('skewX', x);
+				this.set('skewY', y);
 			},
 
 			skewX: function(x) {
-				this.setProp("skewX", x, "deg");
+				this.setProp('skewX', x, 'deg');
 			},
 
 			skewY: function(y) {
-				this.setProp("skewY", y, "deg");
+				this.setProp('skewY', y, 'deg');
 			},
 
 			// {pers: 100}  =>  transform: perspective(100px);
 			pers: function(pers) {
-				this.setProp("perspective", pers, "px");
+				this.setProp('perspective', pers, 'px');
 			}
 		},
 
 		getter: {
 			x: function() {
-				return this._translateX || "0";
+				return this._translateX || '0';
 			},
 
 			y: function() {
-				return this._translateY || "0";
+				return this._translateY || '0';
 			},
 
 			z: function() {
-				return this.translateZ || "0";
+				return this.translateZ || '0';
 			},
 
 			translateX: function() {
-				return this.get("x");
+				return this.get('x');
 			},
 			translateY: function() {
-				return this.get("y");
+				return this.get('y');
 			},
 			translateZ: function() {
-				return this.get("z");
+				return this.get('z');
 			},
 
 			translate: function() {
-				return [this.get("x"), this.get("y")];
+				return [this.get('x'), this.get('y')];
 			},
 
 			translate3d: function() {
-				return [this.get("x"), this.get("y"), this.get("z")];
+				return [this.get('x'), this.get('y'), this.get('z')];
 			},
 
 			scale: function() {
-				var x = this.get("scaleX"),
-					y = this.get("scaleY"),
+				var x = this.get('scaleX'),
+					y = this.get('scaleY'),
 					s = [x, y];
 
-				// "2,2" => "2"
-				// "2,1" => ["2","1"]
+				// '2,2' => '2'
+				// '2,1' => ['2','1']
 				return (s[0] === s[1]) ? s[0] : s;
 			},
 
 			scale3d: function() {
-				var x = this.get("scaleX"),
-					y = this.get("scaleY"),
-					z = this.get("scaleZ"),
+				var x = this.get('scaleX'),
+					y = this.get('scaleY'),
+					z = this.get('scaleZ'),
 					s = [x, y, z];
 
-				// "2,1,2" => ["2","1","2"]
+				// '2,1,2' => ['2','1','2']
 				return s;
 			},
 
 			scaleX: function() {
-				return this._scaleX || "1";
+				return this._scaleX || '1';
 			},
 
 			scaleY: function() {
-				return this._scaleY || "1";
+				return this._scaleY || '1';
 			},
 
 			scaleZ: function() {
-				return this.scaleZ || "1";
+				return this.scaleZ || '1';
 			},
 
 			rotate: function(theta) {
-				return this.rotate || "0";
+				return this.rotate || '0';
 			},
 
 			rotateX: function(theta) {
-				return this.rotateX || "0";
+				return this.rotateX || '0';
 			},
 
 			rotateY: function(theta) {
-				return this.rotateY || "0";
+				return this.rotateY || '0';
 			},
 
 			rotateZ: function(theta) {
-				return this.get("rotate");
+				return this.get('rotate');
 			},
 
 			rotate3d: function() {
-				return [this.get("rotateX"), this.get("rotateY"), this.get("rotate")];
+				return [this.get('rotateX'), this.get('rotateY'), this.get('rotate')];
 			},
 
 			skew: function() {
-				return [this.get("skewX"), this.get("skewY")];
+				return [this.get('skewX'), this.get('skewY')];
 			},
 
 			skewX: function() {
@@ -751,7 +751,7 @@
 				return this.skewY || 0;
 			},
 
-			// .css("pers", 100).css("pers")  =>  100px
+			// .css('pers', 100).css('pers')  =>  100px
 			pers: function() {
 				return this.perspective || 0;
 			}
@@ -761,16 +761,16 @@
 		// If the property value is an empty string, the attributes are removed
 		// If the attribute values are not legal, ignore Settings
 		//
-		//    .css({"rotate": 30}).css({"rotate": ""})      => remove "rotate(30deg)"
-		//    .css({"rotate": 30}).css({"rotate": null})    => "rotate(30deg)"
+		//    .css({'rotate': 30}).css({'rotate': ''})      => remove 'rotate(30deg)'
+		//    .css({'rotate': 30}).css({'rotate': null})    => 'rotate(30deg)'
 		//
 		setProp: function(prop, value, u) {
-			if (value !== undefined && value !== "") {
+			if (value !== undefined && value !== '') {
 				if (isNaN(parseFloat(value))) {
 					value = undefined;
 				}
 			}
-			if (value === "") {
+			if (value === '') {
 				delete this[prop];
 			} else if (value !== undefined) {
 				this[prop] = unit(value, u);
@@ -782,66 +782,66 @@
 		// If one of the attribute value is empty string, is set to the default value
 		// If the attribute values are not legal, ignore Settings
 		//
-		//    .css({"scaleX": 3}).css({"scale": ""})          => remove "scale(3, 1)"
-		//    .css({"scaleX": 3}).css({"scale": ["",4]})      => "scale(1, 4)"
-		//    .css({"scaleX": 3}).css({"scale": [null,4]})    => "scale(3, 4)"
+		//    .css({'scaleX': 3}).css({'scale': ''})          => remove 'scale(3, 1)'
+		//    .css({'scaleX': 3}).css({'scale': ['',4]})      => 'scale(1, 4)'
+		//    .css({'scaleX': 3}).css({'scale': [null,4]})    => 'scale(3, 4)'
 		//
 		// Note
-		//    .css({"translate3d": "2,,"})  === .css({"translate3d": [2, "", ""]})
-		//    .css({"translate3d": [2,,,]}) === .css({"translate3d": "2, null, null"})
+		//    .css({'translate3d': '2,,'})  === .css({'translate3d': [2, '', '']})
+		//    .css({'translate3d': [2,,,]}) === .css({'translate3d': '2, null, null'})
 		//
 		setDoubleProp: function(prop, value1, value2, u) {
-			if (this["_" + prop + "X"] === undefined) {
-				this["_" + prop + "X"] = this.get(prop + "X");
+			if (this['_' + prop + 'X'] === undefined) {
+				this['_' + prop + 'X'] = this.get(prop + 'X');
 			}
-			if (this["_" + prop + "Y"] === undefined) {
-				this["_" + prop + "Y"] = this.get(prop + "Y");
+			if (this['_' + prop + 'Y'] === undefined) {
+				this['_' + prop + 'Y'] = this.get(prop + 'Y');
 			}
 
-			if (value1 !== undefined && value1 !== "") {
+			if (value1 !== undefined && value1 !== '') {
 				if (isNaN(parseFloat(value1))) {
 					value1 = undefined;
 				}
 			}
-			if (value2 !== undefined && value2 !== "") {
+			if (value2 !== undefined && value2 !== '') {
 				if (isNaN(parseFloat(value2))) {
 					value2 = undefined;
 				}
 			}
 
-			if (value1 === "" && value2 === "") {
-				delete this["_" + prop + "X"];
-				delete this["_" + prop + "Y"];
+			if (value1 === '' && value2 === '') {
+				delete this['_' + prop + 'X'];
+				delete this['_' + prop + 'Y'];
 				delete this[prop];
 			} else {
-				if (value1 === "") {
-					delete this["_" + prop + "X"];
-					value1 = this.get(prop + "X");
-				} else if (value2 === "") {
-					delete this["_" + prop + "Y"];
-					value2 = this.get(prop + "Y");
+				if (value1 === '') {
+					delete this['_' + prop + 'X'];
+					value1 = this.get(prop + 'X');
+				} else if (value2 === '') {
+					delete this['_' + prop + 'Y'];
+					value2 = this.get(prop + 'Y');
 				}
 
 				if (value1 !== undefined) {
-					this["_" + prop + "X"] = unit(value1, u);
+					this['_' + prop + 'X'] = unit(value1, u);
 				}
 				if (value2 !== undefined) {
-					this["_" + prop + "Y"] = unit(value2, u);
+					this['_' + prop + 'Y'] = unit(value2, u);
 				}
 
-				if (prop === "scale") {
-					this[prop] = this["_" + prop + "X"] === this["_" + prop + "Y"] ?
-						this["_" + prop + "X"] :
-						this["_" + prop + "X"] + "," + this["_" + prop + "Y"];
+				if (prop === 'scale') {
+					this[prop] = this['_' + prop + 'X'] === this['_' + prop + 'Y'] ?
+						this['_' + prop + 'X'] :
+						this['_' + prop + 'X'] + ',' + this['_' + prop + 'Y'];
 				} else {
-					this[prop] = this["_" + prop + "X"] + "," + this["_" + prop + "Y"];
+					this[prop] = this['_' + prop + 'X'] + ',' + this['_' + prop + 'Y'];
 				}
 			}
 		},
 
 		// ### parse()
 		//
-		//    "rotate(90) scale(4)"  =>  self.setFromString("rotate", 90); self.setFromString("scale", 4);
+		//    'rotate(90) scale(4)'  =>  self.setFromString('rotate', 90); self.setFromString('scale', 4);
 		//
 		parse: function(str) {
 			var self = this;
@@ -856,21 +856,21 @@
 			for (var i in this) {
 				if (this.hasOwnProperty(i)) {
 					if ((!support.transform3d) && (
-							(i === "rotateX") ||
-							(i === "rotateY") ||
-							(i === "translateZ") ||
-							(i === "scaleZ") ||
-							(i === "perspective"))) {
+							(i === 'rotateX') ||
+							(i === 'rotateY') ||
+							(i === 'translateZ') ||
+							(i === 'scaleZ') ||
+							(i === 'perspective'))) {
 						continue;
 					}
 
-					if (i[0] !== "_") {
-						re.push(i + "(" + this[i] + ")");
+					if (i[0] !== '_') {
+						re.push(i + '(' + this[i] + ')');
 					}
 				}
 			}
 
-			return re.join(" ");
+			return re.join(' ');
 		}
 	};
 
@@ -878,20 +878,20 @@
 	// ### getTransition()
 	// Returns the transition string to be used for the `transition` CSS property.
 	//
-	//    getTransition({ opacity: 1, rotate: 30 }, 500, "ease");
-	//    => "opacity 500ms ease, -webkit-transform 500ms ease"
+	//    getTransition({ opacity: 1, rotate: 30 }, 500, 'ease');
+	//    => 'opacity 500ms ease, -webkit-transform 500ms ease'
 	//
 	function getTransition(properties, duration, easing, specialEasing) {
 
 		// 获取属性对应的 transition-property 和 transition-timing-function
-		// {marginTop: 100, paddingLeft: 200} => {"margin-top": "swing", "padding-left": "swing"}
+		// {marginTop: 100, paddingLeft: 200} => {'margin-top': 'swing', 'padding-left': 'swing'}
 		var props = {};
 		for (var p in properties) {
-			var key = $.camelCase(p); // Convert "text-align" => "textAlign"
+			var key = $.camelCase(p); // Convert 'text-align' => 'textAlign'
 			key = propertyMap[key] || $.cssProps[key] || key;
 
 			// Get vendor specify propertie
-			// For example "transform-origin" "perspective"
+			// For example 'transform-origin' 'perspective'
 			if (support[key]) {
 				key = support[key];
 			}
@@ -904,45 +904,45 @@
 		var MS = toMS(duration);
 
 		// For more properties, add them this way:
-		// "margin 200ms ease, padding 200ms ease, ..."
+		// 'margin 200ms ease, padding 200ms ease, ...'
 		var transitions = [];
 		for (var p in props) {
-			transitions.push(uncamel(p) + " " + MS + " " + (props[p]));
+			transitions.push(uncamel(p) + ' ' + MS + ' ' + (props[p]));
 		}
 
-		return transitions.join(",");
+		return transitions.join(',');
 	}
 
 	// ### disposeSpecialValue()
 	//
-	//    .css({left: auto}).animate({left: "100"})   =>  .css({left: 0}).animate({left: 100});
-	//    .animate({opacity: "show"})                 =>  .css({opacity: 0}).show().animate({opacity: 1});
-	//    .animate({opacity: "hide"})                 =>  .css({opacity: 1}).animate({opacity: 0}, function() { $(this).hide() });
+	//    .css({left: auto}).animate({left: '100'})   =>  .css({left: 0}).animate({left: 100});
+	//    .animate({opacity: 'show'})                 =>  .css({opacity: 0}).show().animate({opacity: 1});
+	//    .animate({opacity: 'hide'})                 =>  .css({opacity: 1}).animate({opacity: 0}, function() { $(this).hide() });
 	//
 	function disposeSpecialValue($self, endProps, startProps, callback) {
 		var clearStyles = {},
-			hidden = $self.css("display") === "none",
-			toggle = $self.data("bjj-toggle"),
+			hidden = $self.css('display') === 'none',
+			toggle = $self.data('bjj-toggle'),
 			show;
 
 		// Height/width overflow pass
-		if ("height" in endProps || "width" in endProps) {
-			if ($self.css("display") === "inline" && $self.css("float") === "none") {
-				$self.css("display", "inline-block");
+		if ('height' in endProps || 'width' in endProps) {
+			if ($self.css('display') === 'inline' && $self.css('float') === 'none') {
+				$self.css('display', 'inline-block');
 			}
 		}
 
 		for (var p in endProps) {
 			var startValue = $self.css(p),
 				endValue = endProps[p],
-				isToggle = endValue === "toggle";
+				isToggle = endValue === 'toggle';
 
-			if (endValue === "show" || isToggle && (show === true || show === undefined && (hidden || toggle === false))) {
-				clearStyles[p] = "";
-				if (isToggle) $self.data("bjj-toggle", true);
+			if (endValue === 'show' || isToggle && (show === true || show === undefined && (hidden || toggle === false))) {
+				clearStyles[p] = '';
+				if (isToggle) $self.data('bjj-toggle', true);
 
 				var inlineStyleValue = $self[0].style[p],
-					originalValue = $self.css(p, "").css(p);
+					originalValue = $self.css(p, '').css(p);
 				$self.css(p, inlineStyleValue);
 
 				if (hidden || toggle === false || startValue != originalValue) {
@@ -953,9 +953,9 @@
 					endValue = undefined;
 				}
 
-			} else if (endValue === "hide" || isToggle && (show === false || show === undefined && (!hidden || toggle === true))) {
-				clearStyles[p] = "";
-				if (isToggle) $self.data("bjj-toggle", false);
+			} else if (endValue === 'hide' || isToggle && (show === false || show === undefined && (!hidden || toggle === true))) {
+				clearStyles[p] = '';
+				if (isToggle) $self.data('bjj-toggle', false);
 
 				if (!hidden || toggle === true) {
 					if (show === undefined) show = false;
@@ -966,18 +966,18 @@
 			}
 
 			var startUnit = getUnit(startValue),
-				endUnit = getUnit(endValue);
+				endUnit = getUnit(endValue),
+				startColor,
+				endColor;
 
 			if (isComplex(startValue)) { // 检查复合值是否为阴影
 				startValue = checkShadow(p, startValue);
-
+			} else if (startColor = isColor(startValue)) { // 是否是颜色
 			} else if (isKeyword(startValue)) { // 处理关键字
-				var curColor = isColor(startValue);
-				if (!curColor) {
-					startValue = checkShadow(p, startValue, (endValue + "").indexOf("inset") >= 0); // 如果是阴影属性，则返回一个复合属性
-					if (!isComplex(endValue)) {
-						startValue = 0; // 主要针对定位属性，如：left默认为auto
-					}
+				// 如果是阴影属性，则返回一个复合属性
+				startValue = checkShadow(p, startValue, (endValue + '').indexOf('inset') >= 0);
+				if (!isComplex(startValue)) {
+					startValue = 0; // 主要针对定位属性，如：left默认为auto
 				}
 			} else if (!startUnit && endUnit) {
 				startValue += endUnit;
@@ -985,14 +985,11 @@
 
 			if (isComplex(endValue)) {
 				endValue = checkShadow(p, endValue);
-
+			} else if (endColor = isColor(endValue)) {
 			} else if (isKeyword(endValue)) {
-				var color = isColor(endValue);
-				if (!color) {
-					endValue = checkShadow(p, endValue, startValue.indexOf("inset") >= 0); // 如果是阴影属性，则返回一个复合属性
-					if (!isComplex(endValue) && endValue.match(/^[+-]=/)) { // 主要针对递增或递减值，例如：left: "+=30%"
-						endValue = calculateValue($self, p, startValue, endValue, 1);
-					}
+				endValue = checkShadow(p, endValue, startValue.indexOf('inset') >= 0); // 如果是阴影属性，则返回一个复合属性
+				if (!isComplex(endValue) && endValue.match(/^[+-]=/)) { // 主要针对递增或递减值，例如：left: '+=30%'
+					endValue = calculateValue($self, p, startValue, endValue, 1);
 				}
 			} else if (endValue !== undefined && !endUnit && startUnit) {
 				endValue += startUnit;
@@ -1000,7 +997,7 @@
 
 			if ((endValue === undefined)
 			//|| (startValue == endValue)
-			|| (!!color ^ !!curColor)) {
+			|| (!!endColor ^ !!startColor)) {
 				delete endProps[p];
 				continue;
 			}
@@ -1013,29 +1010,29 @@
 
 		if (show === true) {
 			if ('width' in clearStyles || 'height' in clearStyles) {
-				if($self.data("bjj-overflow") === undefined) {
-					$self.data("bjj-overflow", $self[0].style.overflow);
+				if($self.data('bjj-overflow') === undefined) {
+					$self.data('bjj-overflow', $self[0].style.overflow);
 				}
-				clearStyles["overflow"] = $self.data("bjj-overflow");
-				$self.css("overflow", "hidden");
+				clearStyles['overflow'] = $self.data('bjj-overflow');
+				$self.css('overflow', 'hidden');
 			}
 			$self.show();
 		} else if (show === false) {
 			if ('width' in clearStyles || 'height' in clearStyles) {
-				if($self.data("bjj-overflow") === undefined) {
-					$self.data("bjj-overflow", $self[0].style.overflow);
+				if($self.data('bjj-overflow') === undefined) {
+					$self.data('bjj-overflow', $self[0].style.overflow);
 				}
-				clearStyles["overflow"] = "";
-				$self.css("overflow", "hidden");
+				clearStyles['overflow'] = '';
+				$self.css('overflow', 'hidden');
 			}
-			clearStyles["display"] = "none";
+			clearStyles['display'] = 'none';
 		}
 
 		if (show !== undefined) {
 			fn = function() {
-				if(show) $self.removeData("bjj-overflow");
+				if(show) $self.removeData('bjj-overflow');
 				$self.css(clearStyles);
-				if (typeof callback === "function") callback.call(this);
+				if (typeof callback === 'function') callback.call(this);
 			};
 		}
 
@@ -1057,10 +1054,10 @@
 	}
 
 	function finishCall(self, callback, next) {
-		if (typeof callback === "function") {
+		if (typeof callback === 'function') {
 			callback.call(self);
 		}
-		if (typeof next === "function") {
+		if (typeof next === 'function') {
 			next();
 		}
 	}
@@ -1068,7 +1065,7 @@
 	function delayRun(next) {
 		var self = this,
 			$self = $(self),
-			transitionDelayRunParams = $self.data("bjj-transitionDelayRunParams"),
+			transitionDelayRunParams = $self.data('bjj-transitionDelayRunParams'),
 			transitionValueList = transitionDelayRunParams.transitionValueList,
 
 			params = transitionDelayRunParams.queueParams.shift(),
@@ -1081,7 +1078,7 @@
 			callback = params.callback = disposeSpecialValue($self, endProps, startProps, params.callback),
 			empty = $.isEmptyObject(endProps);
 
-		// If there"s nothing to do...
+		// If there's nothing to do...
 		if (duration === 0 || empty) {
 			if (!empty) $self.css(endProps);
 			finishCall(self, callback, next);
@@ -1099,7 +1096,7 @@
 
 			i = $.inArray(transitionValue, transitionValueList);
 			if (i >= 0) transitionValueList.splice(i, 1);
-			self.style[support.transition] = transitionValueList.join(",");
+			self.style[support.transition] = transitionValueList.join(',');
 
 			finishCall(self, callback, next);
 		};
@@ -1109,7 +1106,7 @@
 
 			var i = $.inArray(transitionValue, transitionValueList);
 			if (i >= 0) transitionValueList.splice(i, 1);
-			self.style[support.transition] = transitionValueList.join(",");
+			self.style[support.transition] = transitionValueList.join(',');
 
 			if (gotoEnd) {
 				finishCall(self, callback, next);
@@ -1118,15 +1115,14 @@
 				for (var p in endProps) {
 					var startValue = startProps[p],
 						endValue = endProps[p],
+						endColor = isColor(endValue),
 						dv;
 
 					setCubicBezier(specialEasing[p]);
 					var bezierY = cubicBezier.getY(($.now() - startTime) / duration);
 
-					if (isColor(endValue)) { // 如果是颜色
-						startValue = parseColor(startValue);
-						endValue = parseColor(endValue);
-						dv = calculateColor(startValue, endValue, bezierY);
+					if (endColor) { // 如果是颜色
+						dv = calculateColor(startValue, endColor, bezierY);
 					} else {
 						dv = calculateValue($self, p, startValue, endValue, bezierY);
 					}
@@ -1156,7 +1152,7 @@
 		transitionValueList.push(transitionValue);
 
 		var startTime = $.now();
-		self.style[support.transition] = transitionValueList.join(",");
+		self.style[support.transition] = transitionValueList.join(',');
 		$self.css(endProps);
 
 		// transitionend 事件还是存在多个 bug
@@ -1169,7 +1165,7 @@
 	// 模拟 .finish() 所需要的方法
 	delayRun.finish = function() {
 		var $self = $(this),
-			transitionDelayRunParams = $self.data("bjj-transitionDelayRunParams") || [],
+			transitionDelayRunParams = $self.data('bjj-transitionDelayRunParams') || [],
 			params = transitionDelayRunParams.queueParams.shift();
 
 		// 能够执行 finish 的动画是没有执行 delayRun 的动画
@@ -1186,7 +1182,7 @@
 
 		this.each(function() {
 			var $self = $(this),
-				transitionDelayRunParams = $self.data("bjj-transitionDelayRunParams");
+				transitionDelayRunParams = $self.data('bjj-transitionDelayRunParams');
 
 			if (!transitionDelayRunParams) {
 				transitionDelayRunParams = {
@@ -1204,10 +1200,10 @@
 				specialEasing: specialEasing
 			});
 
-			$self.data("bjj-transitionDelayRunParams", transitionDelayRunParams);
+			$self.data('bjj-transitionDelayRunParams', transitionDelayRunParams);
 		});
 
-		// Use jQuery"s fx queue.
+		// Use jQuery's fx queue.
 		callOrQueue(this, queue, delayRun);
 
 		return this;
@@ -1217,13 +1213,13 @@
 	// ### propFilter()
 	// jQuery 源码使用该方法来过滤出属性和缓动
 	//
-	//    props         = {left: [200, "easeInBack"], width: [100, "linear"], height: 200}
-	//    specialEasing = {height: "swing"};
+	//    props         = {left: [200, 'easeInBack'], width: [100, 'linear'], height: 200}
+	//    specialEasing = {height: 'swing'};
 	//
 	//    propFilter(props, specialEasing);
 	//
 	//    => props         == {left: 200, width: 100, height: 200}
-	//       specialEasing == {left: "easeInBack", width: "linear", height: "swing"}
+	//       specialEasing == {left: 'easeInBack', width: 'linear', height: 'swing'}
 	//
 	function propFilter(props, specialEasing) {
 		var index, name, easing, value, hooks;
@@ -1244,12 +1240,12 @@
 			}
 
 			hooks = $.cssHooks[name];
-			if (hooks && "expand" in hooks) {
+			if (hooks && 'expand' in hooks) {
 				value = hooks.expand(value);
 				delete props[name];
 
 				// not quite $.extend, this wont overwrite keys already present.
-				// also - reusing "index" from above because we have the correct "name"
+				// also - reusing 'index' from above because we have the correct 'name'
 				for (index in value) {
 					if (!(index in props)) {
 						props[index] = value[index];
@@ -1265,10 +1261,10 @@
 
 	// ### Compatible with the following written
 	// Example:
-	//    .animate.({"translate3d": [100, 200, 300]});
-	//    .animate.({"scale": [1, 2]});
-	//    .animate.({"scale": "1,2"});
-	var _animate = $.fn.animate;
+	//    .animate.({'translate3d': [100, 200, 300]});
+	//    .animate.({'scale': [1, 2]});
+	//    .animate.({'scale': '1,2'});
+	$.fn._animate = $.fn.animate;
 	$.fn.animate = function(properties, duration, easing, callback) {
 		var queue = true,
 			specialEasing = {},
@@ -1277,25 +1273,25 @@
 			originalEasing = easing,
 			originalCallback = callback;
 
-		if (typeof duration === "function") { // Account for `.transition(properties, callback)`.
+		if (typeof duration === 'function') { // Account for `.transition(properties, callback)`.
 			callback = duration;
 			duration = undefined;
-		} else if (typeof duration === "object") { // Account for `.transition(properties, options)`.
+		} else if (typeof duration === 'object') { // Account for `.transition(properties, options)`.
 			originalDuration = $.extend({}, duration);
 			easing = duration.easing;
-			queue = typeof duration.queue === "undefined" ? true : duration.queue;
+			queue = typeof duration.queue === 'undefined' ? true : duration.queue;
 			specialEasing = duration.specialEasing || specialEasing;
 			callback = duration.complete;
 			duration = duration.duration;
-		} else if (typeof easing === "function") { // Account for `.transition(properties, duration, callback)`.
+		} else if (typeof easing === 'function') { // Account for `.transition(properties, duration, callback)`.
 			callback = easing;
 			easing = undefined;
 		}
 		// Set defaults. (`400` duration, `ease` easing)
-		if (typeof duration === "undefined") {
+		if (typeof duration === 'undefined') {
 			duration = $.fx.speeds._default;
 		}
-		if (typeof easing === "undefined") {
+		if (typeof easing === 'undefined') {
 			easing = $.cssEase._default;
 		}
 
@@ -1303,7 +1299,7 @@
 		resolveProp(properties);
 
 		var useTransition = support.transition;
-		if (useTransition && ("scrollLeft" in properties || "scrollTop" in properties)) {
+		if (useTransition && ('scrollLeft' in properties || 'scrollTop' in properties)) {
 			useTransition = false;
 		}
 		if (useTransition) {
@@ -1313,7 +1309,7 @@
 			for (var p in specialEasing) {
 				// 将缓动转换为贝塞尔函数
 				var e = specialEasing[p] = convertEase(specialEasing[p] || easing);
-				if (typeof e === "undefined") {
+				if (typeof e === 'undefined') {
 					useTransition = false;
 					break;
 				} else if (propertyMap[p] === support.transform) {
@@ -1353,9 +1349,9 @@
 			return _animate.call(this, originalProperties, originalDuration, originalEasing, originalCallback);
 		}
 
-		// normalize opt.queue - true/undefined/null -> "fx"
+		// normalize opt.queue - true/undefined/null -> 'fx'
 		if (queue == null || queue === true) {
-			queue = "fx";
+			queue = 'fx';
 		}
 
 		return transition.call(this, properties, duration, easing, callback, queue, specialEasing);
@@ -1363,16 +1359,16 @@
 
 	// ### resolveProp(props)
 	//
-	//    {scale: "3,2"} => {scaleX: 3, scaleY: 2}
+	//    {scale: '3,2'} => {scaleX: 3, scaleY: 2}
 	//
-	var xyz = ["X", "Y", "Z"],
+	var xyz = ['X', 'Y', 'Z'],
 		checkProp = [
-			"translate",
-			"translate3d",
-			"scale",
-			"scale3d",
-			"rotate3d",
-			"skew"
+			'translate',
+			'translate3d',
+			'scale',
+			'scale3d',
+			'rotate3d',
+			'skew'
 		];
 	function resolveProp(props) {
 		for (var i = 0, l = checkProp.length; i < l; i++) {
@@ -1381,27 +1377,27 @@
 				var val = props[p];
 				delete props[p];
 
-				// 区分 [[1,2], "easeOutBack"] 和 [1,2]
+				// 区分 [[1,2], 'easeOutBack'] 和 [1,2]
 				var easeing;
 				if ($.isArray(val)) {
 					var val0 = val[0],
 						val1 = val[1];
 
 					if ($.isArray(val0)
-					|| (typeof val0 === "string" && val0.split(",").length > 1)
+					|| (typeof val0 === 'string' && val0.split(',').length > 1)
 					|| (val1 && isNaN(parseFloat(val1)))) {
 						val = val0;
 						easeing = val1;
 					}
 				}
 
-				var is3d = p.indexOf("3d") !== -1,
+				var is3d = p.indexOf('3d') !== -1,
 					arr;
 
 				if ($.isArray(val)) {
 					arr = val;
 				} else {
-					arr = (typeof val === "string") ? val.split(",") : [val];
+					arr = (typeof val === 'string') ? val.split(',') : [val];
 					// {scale: [3]} => {scale: [3, 3]}
 					if (arr.length < 2) {
 						if (is3d) {
@@ -1413,13 +1409,13 @@
 				}
 
 				if (is3d) p = p.slice(0, -2);
-				var def = p === "scale" ? 1 : 0;
+				var def = p === 'scale' ? 1 : 0;
 				// {scale: [2, 3]} => {scaleX: 2, scaleY: 3}
 				for (var j = 0; j < 3; j++) {
 					val = arr[j];
 					if (val || val === 0) {
 						props[p + xyz[j]] = easeing ? [val, easeing] : val;
-					} else if (val === "") {
+					} else if (val === '') {
 						props[p + xyz[j]] = easeing ? [def, easeing] : def;
 					}
 				}
@@ -1431,67 +1427,67 @@
 	// ### uncamel(str)
 	// Converts a camelcase string to a dasherized string.
 	//
-	//    "marginLeft"              => "margin-left"
-	//    "webkitTransformOrigin"   => "-webkit-transform-origin"
+	//    'marginLeft'              => 'margin-left'
+	//    'webkitTransformOrigin'   => '-webkit-transform-origin'
 	//
 	function uncamel(str) {
-		if (!str.indexOf("webkit")) str = "W" + str.substr(1);
-		if (!str.indexOf("moz") || !str.indexOf("ms")) str = "M" + str.substr(1);
-		return str.replace(/([A-Z])/g, "-$1").toLowerCase();
+		if (!str.indexOf('webkit')) str = 'W' + str.substr(1);
+		if (!str.indexOf('moz') || !str.indexOf('ms')) str = 'M' + str.substr(1);
+		return str.replace(/([A-Z])/g, '-$1').toLowerCase();
 	}
 
 	// ### unit(number, unit)
 	//
-	//    unit(30, "px")      => "30px"
-	//    unit("30%", "px")   => "30%"
+	//    unit(30, 'px')      => '30px'
+	//    unit('30%', 'px')   => '30%'
 	//
 	function unit(i, units) {
-		if ((typeof i === "string") && (!i.match(/^[\-0-9\.]+$/))) {
+		if ((typeof i === 'string') && (!i.match(/^[\-0-9\.]+$/))) {
 			return i;
 		} else {
-			return "" + i + units;
+			return '' + i + units;
 		}
 	}
 
 	// ### getUnit(str)
 	//
-	//    getUnit("30px")      => "px"
-	//    getUnit("30%")       => "%"
-	//    getUnit("30")        => ""
+	//    getUnit('30px')      => 'px'
+	//    getUnit('30%')       => '%'
+	//    getUnit('30')        => ''
 	//
 	function getUnit(value) {
-		if (typeof value !== "string") return "";
+		if (typeof value !== 'string') return '';
 		var s = value.match(/^(?:\-=|\+=)?[\-0-9\.]+/);
-		if (!s) return "";
-		return value.substr(s[0].length) || "";
+		if (!s) return '';
+		return value.substr(s[0].length) || '';
 	}
 
 
 	// ### getBaseValue($self, prop, index)
 	// 根据属性获取百分比时基于的值
-	// @param index 参数表示需要获取的子属性在该符合属性值组中的索引位置，例如 ("margin", 0) == "margin-top"
+	// @param index 参数表示需要获取的子属性在该符合属性值组中的索引位置，例如 ('margin', 0) == 'margin-top'
 	//
-	//    getBaseValue($self, "width")                   =>  $self.parent().width()
-	//    getBaseValue($self, "x")                       =>  $self.outerWidth()
+	//    getBaseValue($self, 'width')                   =>  $self.parent().width()
+	//    getBaseValue($self, 'x')                       =>  $self.outerWidth()
 	//
-	//    getBaseValue($self, "margin", 2)               =>  $self.parent().height()
-	//    getBaseValue($self, "background-position", 0)  =>  $self.outerWidth()
+	//    getBaseValue($self, 'margin', 2)               =>  $self.parent().height()
+	//    getBaseValue($self, 'background-position', 0)  =>  $self.outerWidth()
 	//
 	function getBaseValue($self, prop, index) {
 		var baseSelfKeyword = [
-				"x",
-				"y",
-				"position",
-				"origin",
-				"radius"
+				'x',
+				'y',
+				'position',
+				'origin',
+				'radius'
 			],
 			horDirKeyword = [
-				"x",
-				"width",
-				"padding",
-				"margin",
-				"left",
-				"right"
+				'x',
+				'width',
+				'padding',
+				'margin',
+				'left',
+				'right'
 			],
 			baseSelf = false,
 			dir = 0, // 表示方向，1表示水平，-1表示垂直
@@ -1516,9 +1512,9 @@
 		}
 
 		if (!dir) {
-			if (p.indexOf("position") >= 0
-			|| p.indexOf("size") >= 0
-			|| p.indexOf("origin") >= 0) {
+			if (p.indexOf('position') >= 0
+			|| p.indexOf('size') >= 0
+			|| p.indexOf('origin') >= 0) {
 				if (index === 1) {
 					dir = -1;
 				} else {
@@ -1544,14 +1540,14 @@
 
 	// ### convertUnit()
 	// 将属性值转换为指定单位的新值
-	// @param index 参数表示需要获取的子属性在该符合属性值组中的索引位置，例如 ("margin", 0) == "margin-top"
+	// @param index 参数表示需要获取的子属性在该符合属性值组中的索引位置，例如 ('margin', 0) == 'margin-top'
 	//
-	//    convertUnit($self, "margin", 1, 100px, %)  =>  (100 / $self.parent().width()) * 100 + "%"
+	//    convertUnit($self, 'margin', 1, 100px, %)  =>  (100 / $self.parent().width()) * 100 + '%'
 	//
 	function convertUnit($self, prop, index, value, newUnit) {
-		var px = "px",
-			em = "em",
-			pe = "%",
+		var px = 'px',
+			em = 'em',
+			pe = '%',
 			oldUnit = getUnit(value),
 			newValue = value;
 
@@ -1561,7 +1557,7 @@
 				if (oldUnit === pe) {
 					newValue = oldValue / 100 * getBaseValue($self, prop, index) + px;
 				} else if (oldUnit === em) {
-					newValue = oldValue * parseFloat($self.css("font-size")) + px;
+					newValue = oldValue * parseFloat($self.css('font-size')) + px;
 				}
 			} else if (newUnit === pe) {
 				var baseValue = getBaseValue($self, prop, index);
@@ -1570,13 +1566,13 @@
 				} else if (oldUnit === px) {
 					newValue = (oldValue / baseValue) * 100 + pe;
 				} else if (oldUnit === em) {
-					newValue = (oldValue * parseFloat($self.css("font-size")) / baseValue) * 100 + pe;
+					newValue = (oldValue * parseFloat($self.css('font-size')) / baseValue) * 100 + pe;
 				}
 			} else if (newUnit === em) {
 				if (oldUnit === px) {
-					newValue = oldValue / parseFloat($self.css("font-size")) + em;
+					newValue = oldValue / parseFloat($self.css('font-size')) + em;
 				} else if (oldUnit === pe) {
-					newValue = oldValue / 100 * getBaseValue($self, prop, index) / parseFloat($self.css("font-size")) + em;
+					newValue = oldValue / 100 * getBaseValue($self, prop, index) / parseFloat($self.css('font-size')) + em;
 				}
 			}
 		}
@@ -1588,14 +1584,14 @@
 	// ### calculateValue($self, begin, end, pos)
 	// 根据 0-1 之间的位置比，计算两个属性值在该位置上的中间值
 	//
-	//    calculateValue($self, "left", 0, 10, .5);              =>  5
-	//    calculateValue($self, "left", "50px", "100%", .5);     =>  (100 - 50 / $self.parent().width() * 100) * .5 + 50 / $self.parent().width() * 100 + "%"
-	//    calculateValue($self, "left", "50px", "+=100%", .5);   =>  $self.parent().width() * 100% * .5 + 50 + "px"
+	//    calculateValue($self, 'left', 0, 10, .5);              =>  5
+	//    calculateValue($self, 'left', '50px', '100%', .5);     =>  (100 - 50 / $self.parent().width() * 100) * .5 + 50 / $self.parent().width() * 100 + '%'
+	//    calculateValue($self, 'left', '50px', '+=100%', .5);   =>  $self.parent().width() * 100% * .5 + 50 + 'px'
 	//
-	var rfxnum = new RegExp("^(?:([+-])=|)([+-]?(?:\\d*\\.|)\\d+(?:[eE][+-]?\\d+|))([a-z%]*)$", "i");
+	var rfxnum = new RegExp('^(?:([+-])=|)([+-]?(?:\\d*\\.|)\\d+(?:[eE][+-]?\\d+|))([a-z%]*)$', 'i');
 	function calculateValue($self, prop, begin, end, pos) {
-		begin = (begin + "").split(" ");
-		end = (end + "").split(" ");
+		begin = (begin + '').split(' ');
+		end = (end + '').split(' ');
 
 		var value = [],
 			i = 0,
@@ -1605,17 +1601,15 @@
 			var startValue = begin[i] || 0,
 				endValue = end[i],
 				startUnit = getUnit(startValue),
-				endUnit = getUnit(endValue) || startUnit;
+				endUnit = getUnit(endValue) || startUnit,
+				endColor = isColor(endValue);
 
-			if (isColor(endValue)) {
-				startValue = parseColor(startValue);
-				endValue = parseColor(endValue);
-
-				value[i] = calculateColor(startValue, endValue, pos);
+			if (endColor) {
+				value[i] = calculateColor(startValue, endColor, pos);
 
 			} else if (isNaN(parseFloat(endValue))) { // 可能是一些关键字或者特殊值
 				var ret = rfxnum.exec(end[i]);
-				if (ret) { // 如果结束值为 "+=" 或者 "-="
+				if (ret) { // 如果结束值为 '+=' 或者 '-='
 					var v = (ret[1] + 1) * ret[2] + ret[3];
 					endUnit = startUnit || endUnit; // 单位改用起始值的单位
 					v = convertUnit($self, prop, i, v, endUnit);
@@ -1640,7 +1634,7 @@
 			value.push(begin[i]);
 		}
 
-		value = value.join(" ");
+		value = value.join(' ');
 
 		var numberValue = parseFloat(value);
 
@@ -1651,52 +1645,54 @@
 	// ### toMS(duration)
 	// Converts given `duration` to a millisecond string.
 	//
-	//    toMS("fast") => $.fx.speeds[i] => "200ms"
-	//    toMS("normal") => $.fx.speeds._default => "400ms"
-	//    toMS(10) => "10ms"
-	//    toMS("100ms") => "100ms"
+	//    toMS('fast') => $.fx.speeds[i] => '200ms'
+	//    toMS('normal') => $.fx.speeds._default => '400ms'
+	//    toMS(10) => '10ms'
+	//    toMS('100ms') => '100ms'
 	//
 	function toMS(duration) {
 		var i = duration;
 
-		// Allow string durations like "fast" and "slow", without overriding numeric values.
-		if (typeof i === "string" && (!i.match(/^[\-0-9\.]+/))) {
+		// Allow string durations like 'fast' and 'slow', without overriding numeric values.
+		if (typeof i === 'string' && (!i.match(/^[\-0-9\.]+/))) {
 			i = $.fx.speeds[i] || $.fx.speeds._default;
 		}
 
-		return unit(i, "ms");
+		return unit(i, 'ms');
 	}
 
 	// ### isKeyword(value)
 	// 判断一个值是否为关键字
 	//
-	//    isKeyword("auto");                =>  true
-	//    isKeyword("50px 50px 1px #000");  =>  false
+	//    isKeyword('auto');                =>  true
+	//    isKeyword('50px 50px 1px #000');  =>  false
 	//
 	function isKeyword(value) {
-		return typeof value === "string" && isNaN(parseFloat(value)) && value.split(" ").length === 1;
+		return typeof value === 'string' && isNaN(parseFloat(value)) && value.split(' ').length === 1;
 	}
 
 	// ### isComplex(value)
 	// 判断一个值是否为复合值
 	//
-	//    isComplex("50px");                =>  false
-	//    isComplex("50px 50px 1px #000");  =>  true
+	//    isComplex('50px');                =>  false
+	//    isComplex('rgb(0, 0, 0)');        =>  false
+	//    isComplex('50px 50px 1px #000');  =>  true
 	//
 	function isComplex(value) {
-		return (value + "").split(" ").length > 1;
+		var str = value + '';
+		return str.split(',').length === 1 && str.split(' ').length > 1;
 	}
 
 	// ### isColor(value)
 	// 判断一个值是否为颜色，如果是颜色则返回该颜色的 rgb 形式
 	//
-	//    isColor("white");  =>  "rgb(255,255,255)"
-	//    isColor("auto");   =>  false
+	//    isColor('white');  =>  'rgb(255,255,255)'
+	//    isColor('auto');   =>  false
 	//
 	function isColor(value) {
-		if (typeof value === "string") {
-			if (!value.indexOf("rgb") && value.split(" ").length === 1) return value;
-			return getCorrectValue("color", value);
+		if (typeof value === 'string') {
+			if (!value.indexOf('rgb') && value.split(' ').length === 1) return value;
+			return getCorrectValue('color', value);
 		}
 		return false;
 	}
@@ -1708,32 +1704,32 @@
 	// 如果是阴影则返回该阴影的正确形式，同时去掉参数中的多余空格。
 	// 第三个参数表示 boxShadow 的默认阴影是否为内阴影
 	//
-	//    checkShadow("boxShadow", "50px 50px 1px #000");  =>  rgb(0,0,0) 50px 50px 1px 0px
-	//    checkShadow("boxShadow", "none");                =>  rgba(0, 0, 0, 0) 0px 0px 0px 0px
-	//    checkShadow("left", "50px");                     =>  "50px"
+	//    checkShadow('boxShadow', '50px 50px 1px #000');  =>  rgb(0,0,0) 50px 50px 1px 0px
+	//    checkShadow('boxShadow', 'none');                =>  rgba(0,0,0,0) 0px 0px 0px 0px
+	//    checkShadow('left', '50px');                     =>  '50px'
 	//
 	function checkShadow(prop, value, inset) {
-		if (prop.indexOf("hadow") < 0) return value;
+		if (prop.indexOf('hadow') < 0) return value;
 		value = getCorrectValue(prop, value);
 		if (!value) {
-			var def = inset && !prop.indexOf("box") ? "inset 0 0 0 transparent" : "0 0 0 transparent";
+			var def = inset && !prop.indexOf('box') ? 'inset 0 0 0 transparent' : '0 0 0 transparent';
 			value = getCorrectValue(prop, def);
 		}
-		if (value) value = value.replace(/,\s/g, ",");
+		value = value.replace(/,\s/g, ',');
 		return value;
 	}
 
 	// ### getCorrectValue(prop, value)
 	// 返回该值的正确形式
 	//
-	//    getCorrectValue("color", "white");                   =>  "rgb(255,255,255)"
-	//    getCorrectValue("boxShadow", "50px 50px 1px #000");  =>  rgb(0, 0, 0) 50px 50px 1px 0px
+	//    getCorrectValue('color', 'white');                   =>  'rgb(255,255,255)'
+	//    getCorrectValue('boxShadow', '50px 50px 1px #000');  =>  rgb(0, 0, 0) 50px 50px 1px 0px
 	//
 	function getCorrectValue(prop, value) {
-		testElem.style[prop] = "";
+		testElem.style[prop] = '';
 		testElem.style[prop] = value;
-		$testElem.appendTo("body");
-		value = testElem.style[prop] !== "" && testElem.style[prop] !== "none" && $testElem.css(prop);
+		$testElem.appendTo('body');
+		value = testElem.style[prop] !== '' && testElem.style[prop] !== 'none' && $testElem.css(prop);
 		$testElem.detach();
 		return value;
 	}
@@ -1741,12 +1737,16 @@
 	// ### calculateColor(begin, end, pos)
 	// 根据 0-1 之间的位置比，计算两个颜色在该位置上的过渡色
 	//
-	//    calculateColor([255,255,255,1], [0,0,0,1], .5);  =>  "rgba(127,127,127,1)"
-	//    calculateColor([255,255,255],   [0,0,0],   .5);  =>  "rgb(127,127,127)"
+	//    calculateColor([255,255,255,1], [0,0,0,1], .5);  =>  'rgba(127,127,127,1)'
+	//    calculateColor([255,255,255],   [0,0,0],   .5);  =>  'rgb(127,127,127)'
 	//
 	function calculateColor(begin, end, pos) {
+		// 如果传入的是颜色值，将其先解析为数组
+		if (!$.isArray(begin)) begin = parseColor(begin);
+		if (!$.isArray(end)) end = parseColor(end);
+
 		var len = Math.min(begin.length, end.length),
-			color = "rgb",
+			color = 'rgb',
 			dr = pos * (end[0] - begin[0]),
 			dg = pos * (end[1] - begin[1]),
 			db = pos * (end[2] - begin[2]),
@@ -1755,7 +1755,7 @@
 			b = begin[2] + db,
 			a = 1;
 		if (len > 3) {
-			color += "a";
+			color += 'a';
 			a = parseFloat(begin[3] + pos * (end[3] - begin[3]), 10);
 			r = begin[0] + dr / a * end[3];
 			g = begin[1] + dg / a * end[3];
@@ -1764,19 +1764,19 @@
 		r = parseInt(r, 10);
 		g = parseInt(g, 10);
 		b = parseInt(b, 10);
-		color += "(" + r + "," + g + "," + b ;
-		if (len > 3) { color += "," + a; }
-		color += ")";
+		color += '(' + r + ',' + g + ',' + b ;
+		if (len > 3) { color += ',' + a; }
+		color += ')';
 		return color;
 	}
 
 	// ### parseColor(color)
 	// 将一个颜色值转化为数组形式
 	//
-	//    "rgba(127,127,127,1)"  =>  [127, 127, 127, 1]
-	//    "rgb(127,127,127)"     =>  [127, 127, 127, 1]
-	//    "#000000"              =>  [  0,   0,   0, 1]
-	//    "#fff"                 =>  [255, 255, 255, 1]
+	//    'rgba(127,127,127,1)'  =>  [127, 127, 127, 1]
+	//    'rgb(127,127,127)'     =>  [127, 127, 127, 1]
+	//    '#000000'              =>  [  0,   0,   0, 1]
+	//    '#fff'                 =>  [255, 255, 255, 1]
 	//
 	function parseColor(color) {
 		var match, triplet;
@@ -1804,12 +1804,12 @@
 	// ### getArg(str)
 	// 获取字符串表达式中括号内的参数数组
 	//
-	//    "cubic-bezier(0,0,1,1)" => [0,0,1,1]
+	//    'cubic-bezier(0,0,1,1)' => [0,0,1,1]
 	//
 	function getArg(str) {
 		var s = str.match(/\(.*\)$/);
 		if (s) {
-			var args = s[0].slice(1, -1).split(",");
+			var args = s[0].slice(1, -1).split(',');
 			for (var i = 0, l = args.length; i < l; i++) {
 				var arg = parseFloat(args[i]);
 				args[i] = isNaN(arg) ? undefined : arg;
@@ -1860,10 +1860,10 @@
 		getY: function(x) {
 			var t = .5; //设置t的初值
 			for (var i = 0; i < 1000; i++) {
-				t = t - this._bezierFunc("x", t, x) / this._deltaBezierFunc("x", t, x);
-				if (this._bezierFunc("x", t, x) === 0) break;
+				t = t - this._bezierFunc('x', t, x) / this._deltaBezierFunc('x', t, x);
+				if (this._bezierFunc('x', t, x) === 0) break;
 			}
-			return this._bezierFunc("y", t, 0);
+			return this._bezierFunc('y', t, 0);
 		}
 
 	}
