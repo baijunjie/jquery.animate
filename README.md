@@ -15,7 +15,7 @@ This plugin is the rewriting of **jQuery.animate** method, you do not need to co
 
 ## Usage
 
-将 [jquery.animate.js] 引在 jQuery 之后。
+将 [jquery.animate.js] 引在 jQuery 之后。  
 Just include [jquery.animate.js] after jQuery.
 
 
