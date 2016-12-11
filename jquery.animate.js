@@ -1,6 +1,7 @@
 /*!
  * jQuery Animate v1.8.0 - By CSS3 transition
- * @author baijunjie
+ * (c) 2014-2016 BaiJunjie
+ * MIT Licensed.
  *
  * https://github.com/baijunjie/jquery.animate
  */
