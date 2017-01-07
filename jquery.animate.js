@@ -1,6 +1,6 @@
 /*!
- * jQuery Animate v1.8.0 - By CSS3 transition
- * (c) 2014-2016 BaiJunjie
+ * jQuery Animate v1.8.1 - By CSS3 transition
+ * (c) 2014-2017 BaiJunjie
  * MIT Licensed.
  *
  * https://github.com/baijunjie/jquery.animate
@@ -1265,7 +1265,7 @@
 	//    .animate.({'translate3d': [100, 200, 300]});
 	//    .animate.({'scale': [1, 2]});
 	//    .animate.({'scale': '1,2'});
-	$.fn._animate = $.fn.animate;
+	var _animate = $.fn._animate = $.fn.animate;
 	$.fn.animate = function(properties, duration, easing, callback) {
 		var queue = true,
 			specialEasing = {},
@@ -1277,7 +1277,7 @@
 		if (typeof duration === 'function') { // Account for `.transition(properties, callback)`.
 			callback = duration;
 			duration = undefined;
-		} else if (typeof duration === 'object') { // Account for `.transition(properties, options)`.
+		} else if ($.isPlainObject(duration)) { // Account for `.transition(properties, options)`.
 			originalDuration = $.extend({}, duration);
 			easing = duration.easing;
 			queue = typeof duration.queue === 'undefined' ? true : duration.queue;
@@ -1289,10 +1289,10 @@
 			easing = undefined;
 		}
 		// Set defaults. (`400` duration, `ease` easing)
-		if (typeof duration === 'undefined') {
+		if (!duration && duration !== 0) {
 			duration = $.fx.speeds._default;
 		}
-		if (typeof easing === 'undefined') {
+		if (!easing) {
 			easing = $.cssEase._default;
 		}
 
