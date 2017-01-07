@@ -1,5 +1,9 @@
 # Changelog
 
+### v1.8.1
+
+- 修复了 duration 、easing 参数为 null 时，可能引起的错误。
+
 ### v1.8.0
 
 - jQuery原生的 animate() 现在可以通过 _animate() 来调用
