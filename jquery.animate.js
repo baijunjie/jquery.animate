@@ -1,5 +1,5 @@
 /*!
- * jQuery Animate v1.8.1 - By CSS3 transition
+ * jQuery Animate v1.8.2 - By CSS3 transition
  * (c) 2014-2017 BaiJunjie
  * MIT Licensed.
  *
@@ -1066,9 +1066,11 @@
 	function delayRun(next) {
 		var self = this,
 			$self = $(self),
-			transitionDelayRunParams = $self.data('bjj-transitionDelayRunParams'),
-			transitionValueList = transitionDelayRunParams.transitionValueList,
+			transitionDelayRunParams = $self.data('bjj-transitionDelayRunParams');
 
+		if (!transitionDelayRunParams) return;
+
+		var transitionValueList = transitionDelayRunParams.transitionValueList,
 			params = transitionDelayRunParams.queueParams.shift(),
 			startProps = {},
 			endProps = params.endProps,
@@ -1137,7 +1139,6 @@
 
 		// 模拟 .stop() 所需要的对象
 		var timer = function() {
-			// 当在 animate() 之后 调用 transit() 时
 			// 在 animate 动画完成后，且下一个队列函数已经执行，timer 被加入到 $.timers 队列中后，此时 jQuery 又会执行一次 jQuery.fx.tick
 			// 在 jQuery.fx.tick 中 $.timers 会将返回值为 false 的 timer 全部清空，这样会导致当前的动画无法执行 stop()
 			// 注释：animate 的动画中 timer() 的返回值为当前动画的剩余时间
@@ -1164,12 +1165,18 @@
 	}
 
 	// 模拟 .finish() 所需要的方法
+	// 当执行 finish() 时
+	// 如果动画队列中只有一个动画，那么这里的 finish 不会执行，只会执行 stop()
+	// 如果动画队列中有多个动画，那么除第一个动画以外，剩余多少动画，这里的 finish 就会被执行多少次。
 	delayRun.finish = function() {
 		var $self = $(this),
-			transitionDelayRunParams = $self.data('bjj-transitionDelayRunParams') || [],
-			params = transitionDelayRunParams.queueParams.shift();
+			transitionDelayRunParams = $self.data('bjj-transitionDelayRunParams');
 
-		// 能够执行 finish 的动画是没有执行 delayRun 的动画
+		if (!transitionDelayRunParams) return;
+
+		var params = transitionDelayRunParams.queueParams.shift();
+
+		// 能够执行 finish 的动画，将不会执行 delayRun
 		params.callback = disposeSpecialValue($self, params.endProps, {}, params.callback);
 
 		$self.css(params.endProps);
