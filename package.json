@@ -1,0 +1,22 @@
+{
+  "name": "jquery.animate",
+  "version": "1.8.3",
+  "description": "By CSS3 Transition, Support The .stop() method.",
+  "main": "jquery.animate.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/baijunjie/jquery.animate.git"
+  },
+  "author": "baijunjie",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/baijunjie/jquery.animate/issues"
+  },
+  "homepage": "https://github.com/baijunjie/jquery.animate#readme",
+  "files": [
+    "jquery.animate.js"
+  ]
+}

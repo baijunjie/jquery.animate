@@ -35,6 +35,23 @@ require(['jquery.animate'], function($) {
 });
 ```
 
+#### npm
+
+安装
+
+```
+$ npm install jquery.animate
+```
+
+引入
+
+```js
+// ES6
+import $ from 'jquery.animate'
+// CommonJS
+var $ = require('jquery.animate')
+```
+
 ## cssHook
 
 Can be directly through the **.css()** method to set the **Transform** properties.

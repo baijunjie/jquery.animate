@@ -1,5 +1,5 @@
 /*!
- * jQuery Animate v1.8.2 - By CSS3 transition
+ * jQuery Animate v1.8.3 - By CSS3 transition
  * (c) 2014-2017 BaiJunjie
  * MIT Licensed.
  *
@@ -9,10 +9,10 @@
 (function(root, factory) {
 	'use strict';
 
-	if (typeof define === 'function' && define.amd) {
-		define(['jquery'], factory);
-	} else if (typeof exports === 'object') {
+	if (typeof module === 'object' && typeof exports === 'object') {
 		module.exports = factory(require('jquery'));
+	} else if (typeof define === 'function' && define.amd) {
+		define(['jquery'], factory);
 	} else {
 		factory(root.jQuery);
 	}
