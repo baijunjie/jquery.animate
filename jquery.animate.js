@@ -1,5 +1,5 @@
 /*!
- * jQuery Animate v1.8.3 - By CSS3 transition
+ * jQuery Animate v1.8.4 - By CSS3 transition
  * (c) 2014-2017 BaiJunjie
  * MIT Licensed.
  *
@@ -943,8 +943,8 @@
 				if (isToggle) $self.data('bjj-toggle', true);
 
 				var inlineStyleValue = $self[0].style[p],
-					originalValue = $self.css(p, '').css(p);
-				$self.css(p, inlineStyleValue);
+					originalValue = $self.css(p, '').show().css(p);
+				$self.hide().css(p, inlineStyleValue);
 
 				if (hidden || toggle === false || startValue != originalValue) {
 					if (show === undefined) show = true;
