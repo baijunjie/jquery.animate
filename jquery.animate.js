@@ -1,5 +1,5 @@
 /*!
- * jQuery Animate v1.8.4 - By CSS3 transition
+ * jQuery Animate v1.8.5 - By CSS3 transition
  * (c) 2014-2017 BaiJunjie
  * MIT Licensed.
  *
@@ -942,9 +942,16 @@
 				clearStyles[p] = '';
 				if (isToggle) $self.data('bjj-toggle', true);
 
+				// jQuery 在获取 display: none 元素的宽高等属性时，会先让元素显示出来，但是又会为元素添加 position: absolute。
+				// 因此，当元素的宽高为百分比时，其基于的父元素会改变为最近的定位父元素，这就导致获取的宽高不正确
+				// 这里只好手动让元素显示出来后，再获取它的宽高。
+				if (hidden) $self.show();
+
 				var inlineStyleValue = $self[0].style[p],
-					originalValue = $self.css(p, '').show().css(p);
-				$self.hide().css(p, inlineStyleValue);
+					originalValue = $self.css(p, '').css(p);
+				$self.css(p, inlineStyleValue);
+
+				if (hidden) $self.hide();
 
 				if (hidden || toggle === false || startValue != originalValue) {
 					if (show === undefined) show = true;

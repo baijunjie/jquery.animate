@@ -1,6 +1,6 @@
 {
   "name": "jquery.animate",
-  "version": "1.8.4",
+  "version": "1.8.5",
   "description": "By CSS3 Transition, Support The .stop() method.",
   "main": "jquery.animate.js",
   "scripts": {
