@@ -35,7 +35,7 @@ require(['jquery.animate'], function($) {
 });
 ```
 
-#### npm
+#### NPM
 
 安装
 
@@ -142,7 +142,7 @@ $('div').animate({
 
 ```js
 $('div').animate({ 'scale': [1, 2] });        //=> scale(1,2)
-$('div').animate({ 'rotate3d': '30,20,90' }); //=> rotateX(60deg) rotateY(30deg)
+$('div').animate({ 'rotate3d': '30,20,90' }); //=> rotateX(30deg) rotateY(20deg) rotate(90deg)
 ```
 
 To support the animation of the composite properties.
@@ -180,7 +180,7 @@ window.setTimeout(function() {
 }, 1000);
 ```
 
-Note that because of **CSS3 Transition** animation support only three times bezier curve, so some slow moving in [jQuery.easing] cannot support, such as: Bounce.  
+**Note** that because of **CSS3 Transition** animation support only three times bezier curve, so some slow moving in [jQuery.easing] cannot support, such as: Bounce.  
 If use it does not support **Easing**, We will use the original **jQuery.animate** methods to achieve this animation.
 
 Meanwhile, all the **Transform** property can not be separately set **Easing**, because their **Transition** through **Transform** property to set the.  

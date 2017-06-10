@@ -1,5 +1,5 @@
 /*!
- * jQuery Animate v1.8.5 - By CSS3 transition
+ * jQuery Animate v1.8.6 - By CSS3 transition
  * (c) 2014-2017 BaiJunjie
  * MIT Licensed.
  *
