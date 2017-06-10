@@ -2,8 +2,6 @@
 
 Rewrite the **jQuery.animate**'s default behavior, The priority use **CSS3 Transition** to achieve animation.
 
-[Changelog](https://github.com/baijunjie/jquery.animate/blob/master/Changelog.md)
-
 
 ## Why use?
 
