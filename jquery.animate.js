@@ -1,5 +1,5 @@
 /*!
- * jQuery Animate v1.8.7 - By CSS3 transition
+ * jQuery Animate v1.8.8 - By CSS3 transition
  * (c) 2014-2017 BaiJunjie
  * MIT Licensed.
  *
@@ -19,6 +19,51 @@
 
 }(this, function($) {
 	'use strict';
+
+	// jQuery 3.0.0 以及之后的版本已经兼容 requestAnimationFrame API
+	if (compareVersion('3.0.0', $.fn.jquery) > 0) {
+		// Integration jQuery requestAnimationFrame - v0.1.3pre
+		// - https://github.com/gnarf37/jquery-requestAnimationFrame
+		(function(jQuery) {
+
+			var animating,
+				lastTime = 0,
+				vendors = ['webkit', 'moz'],
+				requestAnimationFrame = window.requestAnimationFrame,
+				cancelAnimationFrame = window.cancelAnimationFrame;
+
+			for(; lastTime < vendors.length && !requestAnimationFrame; lastTime++) {
+				requestAnimationFrame = window[ vendors[lastTime] + "RequestAnimationFrame" ];
+				cancelAnimationFrame = cancelAnimationFrame ||
+					window[ vendors[lastTime] + "CancelAnimationFrame" ] ||
+					window[ vendors[lastTime] + "CancelRequestAnimationFrame" ];
+			}
+
+			function raf() {
+				if ( animating ) {
+					requestAnimationFrame( raf );
+					jQuery.fx.tick();
+				}
+			}
+
+			if ( requestAnimationFrame ) {
+				// use rAF
+				window.requestAnimationFrame = requestAnimationFrame;
+				window.cancelAnimationFrame = cancelAnimationFrame;
+				jQuery.fx.timer = function( timer ) {
+					if ( timer() && jQuery.timers.push( timer ) && !animating ) {
+						animating = true;
+						raf();
+					}
+				};
+
+				jQuery.fx.stop = function() {
+					animating = false;
+				};
+			}
+
+		}($));
+	}
 
 	// Integration jQuery Easing v1.3
 	// - http://gsgd.co.uk/sandbox/jquery/easing/
